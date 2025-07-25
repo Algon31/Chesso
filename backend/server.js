@@ -17,8 +17,8 @@ app.use(express.json()); // when frontend sends info it make sure it reads prope
 
 
 const allowedOrigins = [
-  process.env.FrontEND,
-  process.env.FrontEND_origins,
+  "https://chesso-tau.vercel.app/",
+  "https://chesso-algons-projects.vercel.app",
 ];
 
 app.use(cors({
