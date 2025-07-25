@@ -30,7 +30,7 @@ const AuthProvider = ({ children })=>{
                 toast.error(response.status);
             }
         }catch(error){
-            toast.error("error fteching login");
+            console.log("error fetching login info :" , error)
         }
     }
     
