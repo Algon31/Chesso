@@ -7,7 +7,7 @@ const verfiytoken = (req , res, next)=>{
     
     const token = req.cookies.jwtToken;
     if(!token){
-        console.log("token was not found")
+        // console.log("token was not found")
         return res.status(401).json({message : "Access Denied"});
     }
     try{

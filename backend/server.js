@@ -13,9 +13,12 @@ dotenv.config();
 
 app.use(cookieParser()); //  now it can read cookies sent by client
 
+app.use(express.json()); // when frontend sends info it make sure it reads properly
+
+
 const allowedOrigins = [
-  "https://chesso-tau.vercel.app",
-  "https://chesso-algons-projects.vercel.app",
+  process.env.FrontEND,
+  process.env.FrontEND_origins,
 ];
 
 app.use(cors({
