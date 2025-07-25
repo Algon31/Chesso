@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'UrbanistCustom';
+  src: url('./assets/fonts/Urbanist-master/Urbanist-ExtraBold.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+body{
+    font-family: 'UrbanistCustom', sans-serif;
+}

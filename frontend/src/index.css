@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'UrbanistCustom';
+  src: url('./assets/fonts/Urbanist-master/Urbanist-Regular.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'boldy';
+  src: url('./assets/fonts/Urbanist-master/Urbanist-Regular.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'thiny';
+  src: url('./assets/fonts/Urbanist-master/Urbanist-Regular.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+}
+body{
+    font-family: 'UrbanistCustom', sans-serif;
+}
