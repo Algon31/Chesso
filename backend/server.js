@@ -14,16 +14,22 @@ dotenv.config();
 app.use(cookieParser()); //  now it can read cookies sent by client
 
 const allowedOrigins = [
-  process.env.FrontEND,
-  // You can add others if needed
+  "https://chesso-tau.vercel.app",
+  "https://chesso-algons-projects.vercel.app",
 ];
 
 app.use(cors({
-  origin : process.env.FrontEND, // frontend port 
-  methods : ["GET" , "POST" , "PUT" , "DELETE" ],
-  credentials : true // this alows cookies to be sent/recive 
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS: " + origin));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
 }));
-app.use(express.json());
 
 
 app.get('/', (req, res) => {
