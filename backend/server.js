@@ -13,6 +13,11 @@ dotenv.config();
 
 app.use(cookieParser()); //  now it can read cookies sent by client
 
+const allowedOrigins = [
+  process.env.FrontEND,
+  // You can add others if needed
+];
+
 app.use(cors({
   origin : process.env.FrontEND, // frontend port 
   methods : ["GET" , "POST" , "PUT" , "DELETE" ],
@@ -24,6 +29,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('Hello World!');
 })
+
 
 if(process.env.MONGO_URI){
       mongoose.connect(process.env.MONGO_URI, { //  connncts mongoDB
