@@ -9,54 +9,51 @@ const AuthProvider = ({ children })=>{
     const[user , setUser] = useState(null); 
     // here we created a gloabal user so that we can acess it across all the components and only if it is inside the authprovider in appjs
     
+    useEffect(() => {
     ///saves the logged info and saves it  it localstorage and setUser
-    const fetchuser = async ()=>{
+    const checkStatus = async ()=>{
         try{
-            const response = await fetch(`${BackEndUrl}/auth/check-logged`,{
+            const response = await fetch(`${BackEndUrl}/auth/check-logged`, {
                 method : "GET",
-                credentials : 'include',
+                credentials : "include",
             });
-            // console.log("this is response :" , response);
+            console.log("response from backend :",response)
             if(response.ok){
-                const userinfo = await response.json();
-                setUser(userinfo.data); // sets global user
-                localStorage.setItem('user' , JSON.stringify(userinfo.data)); // saves to local
-
-            }
-            else if(response.status == 401){
-                console.log("user not logged");
+                const jsondata = await response.json();
+                setUser(jsondata._id);
+                console.log("user is being saved");
+                localStorage.setItem('userId', jsondata._id); // save to local data
             }
             else{
-                toast.error(response.status);
+                console.log("error in respone :" ,  response.message);
             }
-        }catch(error){
-            console.log("error fetching login info :" , error)
+        }
+        catch(error){
+            toast.error(error);
         }
     }
+    checkStatus();
+    }, []);
+    
+    useEffect(() => {
+        if(user){
+            localStorage.setItem('userId' , user._id);
+            console.log("user saved to local");
+        }
+        else{
+            const loc = localStorage.getItem('userId')
+            if(loc){
+                setUser(loc);
+            }
+        }
+    }, [user]);//  sets user or takes from localstorage is user is changed
+    
     
 
         
     
 
 
-    //stays logged in even after pages reload
-    useEffect(() => {
-        const usersaved = localStorage.getItem('user');
-            // console.log(usersaved);
-            if(usersaved){
-                try{
-                    const userinfo = JSON.parse(usersaved);
-                    setUser(userinfo);
-                    console.log("this is user info :" , userinfo);
-                }catch(error){
-                    console.log("failed to use user from local stargae");
-                }
-            }
-            else{
-                // toast.success("fetching user info...");
-                fetchuser();
-            }
-    }, []);
 
 
 

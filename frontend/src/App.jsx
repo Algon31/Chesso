@@ -5,6 +5,7 @@ import Signin from './Pages/AuthPages/Signin';
 import { Toaster } from 'sonner';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import { AuthProvider } from './context/AuthContext';
+import SocketChecker from './Pages/Game/SocketChecker';
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
     <AuthProvider> 
 
         <Toaster position="top-center" richColors />
+        {/* <SocketChecker/> */}
         <Router>
           <Routes>
             <Route path="/" element={<Dashboard/>} />

@@ -7,7 +7,7 @@ export default function Navbar() {
     <>
     <div className='sticky top-5 mx-auto w-1/2 h-14 bg-[#B75A48] shadow-md text-center rounded-2xl flex justify-center'>
             <ol className='flex justify-center items-center content-center text-center'>
-                <li className={Location.pathname == '/' ? "px-10 bg-[#843E34] p-2  " : "px-10 p-2"}>
+                <li className={Location.pathname == '/' ? "px-10 bg-[#843E34] p-2  rounded-2xl w-auto" : "px-10 p-2"}>
                     <a href='/'>
                         Home
                     </a>

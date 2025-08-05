@@ -55,16 +55,15 @@ export const userAuth = () =>{
                 
             });
             console.log(response);
-            // toast.success("fetching data ... ");
             const data = await response.json();
+            // toast.success("data fetched : ", data);
 
             if(response.ok){
-                // console.log(data.user);
-                setUser(data.user); // setting the user
+                setUser(data.user._id); // setting the user id
                 navigate("/Dashboard");
             }
             else{
-                toast.error("could not fetch" , data.message);
+                toast.error("could not fetch");
             }
         }
         catch(error){
@@ -73,7 +72,7 @@ export const userAuth = () =>{
     }
     const Logout = () =>{
         setUser(null);
-        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
         navigate('/signin');
     }
     return {handleRegister , handleSignin , Logout};

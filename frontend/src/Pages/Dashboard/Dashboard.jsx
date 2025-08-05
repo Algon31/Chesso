@@ -1,18 +1,19 @@
 // import Button from "../../Components/Button";
 import { useContext } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { data, Navigate, useNavigate } from "react-router-dom";
 import Navbar from "../../Components/Navbar";
 import { toast } from 'sonner';
 import { AuthContext } from "../../context/AuthContext";
 import LogoutButton from "../../Components/LogoutButton";
+import BackEndUrl from "../../utilites/config";
+const socket = io(BackEndUrl);
 
 
 
 export default function Dashboard() {
-  const { user } = useContext(AuthContext);
-  const navigate  = useNavigate();
+  const { user  , checkStatus } = useContext(AuthContext);
 
-
+  
 
 
   return (
@@ -56,18 +57,34 @@ export default function Dashboard() {
 function Button({user}){
     const navigate  = useNavigate();
 
-
     const HandleStart = () =>{
-      // toast.success("clicked")
-      console.log(user);
+      
+      console.log("user :",user);
+      try{
           if(user == null){
             toast.error("user not found");
             navigate('/signin');
             return;
           }
-          else{
-            toast.success("starting..");
-          }
+          const PlayerID = user;
+
+          socket.emit("StartGame", PlayerID);
+
+          socket.on("WatingForOpponent",(message)=>{
+            toast.success("Wating For Opponents")
+          });
+
+          socket.io('gameStarted',(data)=>{
+            const {gameID} = data;
+            toast.success("game started !");
+            navigate(`/game/${gameID}`, {state : {gameData : data}})
+          });
+        }
+        catch(error){
+          toast.error("error starting game :")
+        }
+
+
       } 
   return (
     <>

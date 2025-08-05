@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {userAuth} from "../../Auth/userAuth";
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import BackEndUrl from '../../utilites/config';
 
 export default function Signup() {

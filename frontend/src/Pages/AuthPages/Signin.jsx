@@ -23,9 +23,7 @@ export default function Signin() {
   const HandleSignin = async (e)=>{
     try{
       if (!email || !password){
-        toast.error("Fill the details",{
-          className : '!bg-[#B75A48] !text-black !border-2xl border-[#E8ECD6]'
-        });
+        toast.error("Fill the details");
         return;
       }
       const userinfo = { email , password };
