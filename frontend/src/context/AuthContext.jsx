@@ -29,7 +29,7 @@ const AuthProvider = ({ children })=>{
             }
         }
         catch(error){
-            toast.error(error);
+            toast.error(`error to check login: ${error}`);
         }
     }
     checkStatus();
@@ -37,8 +37,8 @@ const AuthProvider = ({ children })=>{
     
     useEffect(() => {
         if(user){
-            localStorage.setItem('userId' , user._id);
-            console.log("user saved to local");
+            localStorage.setItem('userId' , user);
+            console.log("user saved to local USER:" , user);
         }
         else{
             const loc = localStorage.getItem('userId')

@@ -1,5 +1,5 @@
 import {Chess} from 'chess.js';
-import Game from '../models/GameModel'
+import Game from '../models/GameModel.js'
 
 
 let waitingQ = []; // array for queue 
@@ -10,73 +10,77 @@ const Games = {}; // for storing games
 export default function gameSetupSocket(io) {
     io.on('connection', (socket)=>{
         console.log("new user connected and ID is:" , socket.id);
-    
+        
         socket.on("StartGame", async (playerID)=>{ 
             console.log("player joined :" , playerID);
 
-        waitingQ.push({playerID , socket});
+            // if(!waitingQ.some(player => player.playerID) == playerID){ // check if same user is checking
+                waitingQ.push({playerID , socket});
+            // } 
+            console.log(" wating queue : ",waitingQ);
         
-        if(waitingQ.length <= 1){ // if no one is online it just adds to the queue
-            socket.emit('waiting for opponent ' , {message : "wait for someone..."})
-        }
-        else{
-            const opponent = waitingQ.shift(); // removes the first element and retuns the element from array
-            
-            const newGame = new Game({
-                player1 : opponent.playerID,
-                player2 : playerID,
-                currentP : opponent.playerID,
-                timer : {
-                    player1 : 5 * 60 * 1000,
-                    player2 : 5 * 60 * 1000,
-                }
-            }); // createing a new game
+            if(waitingQ.length <= 1){ // if no one is online it just adds to the queue
+                socket.emit('WatingForOpponent' , {message : "wait for someone..."})
+            }
+            else{
+                const opponent = waitingQ.shift(); // removes the first element and retuns the element from array
 
-            const savedG = await newGame.save(); //  saves in DB 
-            const gameID = savedG._id.toString(); // gameID is the _id from DB
+                const newGame = new Game({
+                    player1 : opponent.playerID,
+                    player2 : playerID,
+                    currentP : opponent.playerID,
+                    timer : {
+                        player1 : 5 * 60 * 1000,
+                        player2 : 5 * 60 * 1000,
+                    }
+                }); // createing a new game
 
-            const chess = new Chess(); // chess instance
+                const savedG = await newGame.save(); //  saves in DB 
+                const gameID = savedG._id.toString(); // gameID is the _id from DB
 
-            Games[gameID] = { // starting of the game
-                chess,
-                currentplayer : opponent.playerID,
-                player1 : opponent.playerID,
-                player2 : playerID,
-                timer : {
-                    player1 : 5 * 60 * 1000,
-                    player2 : 5 * 60 * 1000,
-                },
-                timerIntervals : {
-                    player1 : null,
-                    player2 : null,
-                },
-                status : 'ongoing', // sets the game has started
-            };
+                const chess = new Chess(); // chess instance
 
-            socket.join(gameID); // creates a room for 2 people
-            opponent.socket.join(gameID); //  joins the other player too
+                Games[gameID] = { // starting of the game
+                    chess,
+                    currentplayer : opponent.playerID,
+                    player1 : opponent.playerID,
+                    player2 : playerID,
+                    timer : {
+                        player1 : 5 * 60 * 1000,
+                        player2 : 5 * 60 * 1000,
+                    },
+                    timerIntervals : {
+                        player1 : null,
+                        player2 : null,
+                    },
+                    status : 'ongoing', // sets the game has started
+                };
 
-            startTimer(gameID , 'player1' , io);
+                socket.join(gameID); // creates a room for 2 people
+                opponent.socket.join(gameID); //  joins the other player too
 
-            opponent.socket.emit('gameStarted' , {
-                gameID,
-                board : chess.fen(),
-                turn : opponent.playerID,
-                player1 : Games[gameID].player1,
-                player2 : Games[gameID].player2,
-                color : 'white',
-            }); // sets the first player to white
+                startTimer(gameID , 'player1' , io);
+
+                opponent.socket.emit('gameStarted' , {
+                    gameID,
+                    board : chess.fen(),
+                    turn : opponent.playerID,
+                    player1 : Games[gameID].player1,
+                    player2 : Games[gameID].player2,
+                    color : 'White',
+                }); // sets the first player to white
 
 
-            socket.emit('gameStarted' , {
-                gameID,
-                board : chess.fen(),
-                turn : opponent.playerID,
-                player1 : Games[gameID].player1,
-                player2 : Games[gameID].player2,
-                color : 'black',
-            }); // sets the current player to black
-        }
+                socket.emit('gameStarted' , {
+                    gameID,
+                    board : chess.fen(),
+                    turn : opponent.playerID,
+                    player1 : Games[gameID].player1,
+                    player2 : Games[gameID].player2,
+                    color : 'Black',
+                }); // sets the current player to black
+                
+            } 
         });
         socket.on('makeMove', async (gameID , from , to , playerID)=>{
             const game = Games[gameID];
@@ -180,7 +184,7 @@ function startTimer (gameID , player , io){
             
             const result = {WinnerID , draw : false , res : 'Time-out'};
 
-            io.io(gameID).emit('gameOver' , result);
+            io.on(gameID).emit('gameOver' , result);
 
             delete Games[gameID];
         }

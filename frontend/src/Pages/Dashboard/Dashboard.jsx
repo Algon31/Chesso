@@ -3,9 +3,11 @@ import { useContext } from "react";
 import { data, Navigate, useNavigate } from "react-router-dom";
 import Navbar from "../../Components/Navbar";
 import { toast } from 'sonner';
+import { io } from "socket.io-client";
 import { AuthContext } from "../../context/AuthContext";
 import LogoutButton from "../../Components/LogoutButton";
 import BackEndUrl from "../../utilites/config";
+import { useEffect } from "react";
 const socket = io(BackEndUrl);
 
 
@@ -13,6 +15,11 @@ const socket = io(BackEndUrl);
 export default function Dashboard() {
   const { user  , checkStatus } = useContext(AuthContext);
 
+  useEffect(() => {
+    
+    console.log("user : ",user);
+  
+  }, [])
   
 
 
@@ -59,29 +66,31 @@ function Button({user}){
 
     const HandleStart = () =>{
       
-      console.log("user :",user);
       try{
-          if(user == null){
-            toast.error("user not found");
-            navigate('/signin');
-            return;
-          }
-          const PlayerID = user;
-
-          socket.emit("StartGame", PlayerID);
+        
+        if(user == null || user == undefined){
+          toast.error("user not found");
+          navigate('/signin');
+          return;
+        }
+        const PlayerID = user;
+        
+        socket.emit("StartGame", PlayerID);
+        console.log("PlayerID :", PlayerID);
 
           socket.on("WatingForOpponent",(message)=>{
+            console.log("waitng message : ",message)
             toast.success("Wating For Opponents")
           });
 
-          socket.io('gameStarted',(data)=>{
+          socket.on('gameStarted',(data)=>{
             const {gameID} = data;
             toast.success("game started !");
-            navigate(`/game/${gameID}`, {state : {gameData : data}})
+            navigate(`/Gamepage/${gameID}`, {state : {gameData : data}})
           });
         }
         catch(error){
-          toast.error("error starting game :")
+          toast.error(`error starting game : ${error}`)
         }
 
 

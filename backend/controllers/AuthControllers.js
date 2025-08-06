@@ -44,7 +44,7 @@ export const googlecallback = (req,res)=>{ // this is called for verifying googl
                 samesite : "None",
                 secure : true, // the cookie is sent through the http sever and no where else
             });
-            return res.redirect(`${process.env.FrontEND}/dashboard`);
+            return res.redirect(`${process.env.FrontEND}/Dashboard`);
         }
     })(req , res);
 }   
