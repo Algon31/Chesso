@@ -39,10 +39,10 @@ export const googlecallback = (req,res)=>{ // this is called for verifying googl
         const jwtToken = user.generateAccessToken(); // generate tokken is called from models
 
         if(jwtToken){ 
-            res.cookie("jwtToken",jwtToken,{ // this is the cookie send to the browser(client's)
+            res.cookie("jwtToken", jwtToken ,{ // this is the cookie send to the browser(client's)
                 httpOnly : true, // in console it wont show
-                samesite : "Lax",
                 secure : true, // the cookie is sent through the http sever and no where else
+                samesite : "Lax",
             });
             return res.redirect(`${process.env.FrontEND}/Dashboard`);
         }
@@ -62,27 +62,31 @@ export const login =  async (req , res) =>{
             return res.status(401).json({message : "invaild credentials"});
         }
 
-        const tokens = user.generateAccessToken();
-        console.log("cookies : " , tokens);
-        res.cookie("jwtoken" , tokens , {
+        const jwtToken = user.generateAccessToken();
+
+
+        console.log("cookies : " , jwtToken);
+        res.cookie("jwToken" , jwtToken , {
             httpOnly : true,
+            secure : true, // for server it is true
             sameSite : "Lax", // for server its None
-            secure : false // for server it is true
+            
         });
 
-        res.json({
+        return res.json({
             message : "logged in",
+            // token : jwtToken,
             user : {
-                name : user.name,
+                name : user.Name,
                 email : user.email,
-                profilePicture : user.profilePicture,
+                profilePicture : user.ProfilePicture,
                 _id : user._id,
             },
         });
     }
     catch(error){
         res.status(401).json({
-            message : "error.message"
+            message : "sorry can't help"
         })
     }
 

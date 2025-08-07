@@ -23,7 +23,7 @@ const AuthProvider = ({ children }) => {
           console.log("user is being saved");
           localStorage.setItem("userId", jsondata._id); // save to local data
         } else {
-          console.log("error checking logged info");
+          console.log("error checking logged info" , response);
           // setUser(null);
           // localStorage.removeItem('userId')
         }

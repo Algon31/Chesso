@@ -44,10 +44,10 @@ userSchema.methods.generateAccessToken = function (){  // mainly three parts
     return jwt.sign( // header is usally defined by the jsonwebtoken library.
         {
             _id : this._id,
-            name : this.name,
+            name : this.Name,
             email : this.email // your details as payload (your info)
         },
-        process.env.JWT_Secret_baby , // tis is your signature 
+        process.env.JWT_Secret_baby , // this is your signature 
         {expiresIn : process.env.JWT_Expiry.toString()} // expiry time of jet token
     ); // at last while returning the token is encoded and seperated by dots
 };
