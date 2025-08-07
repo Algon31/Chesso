@@ -41,7 +41,7 @@ export const googlecallback = (req,res)=>{ // this is called for verifying googl
         if(jwtToken){ 
             res.cookie("jwtToken",jwtToken,{ // this is the cookie send to the browser(client's)
                 httpOnly : true, // in console it wont show
-                samesite : "None",
+                samesite : "Lax",
                 secure : true, // the cookie is sent through the http sever and no where else
             });
             return res.redirect(`${process.env.FrontEND}/Dashboard`);
@@ -63,10 +63,10 @@ export const login =  async (req , res) =>{
         }
 
         const tokens = user.generateAccessToken();
-
-        res.cookie("jwtokens" , tokens , {
+        console.log("cookies : " , tokens);
+        res.cookie("jwtoken" , tokens , {
             httpOnly : true,
-            sameSite : "None", // for server its None
+            sameSite : "Lax", // for server its None
             secure : false // for server it is true
         });
 

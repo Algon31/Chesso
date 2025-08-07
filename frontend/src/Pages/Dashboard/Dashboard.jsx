@@ -16,10 +16,8 @@ export default function Dashboard() {
   const { user  , checkStatus } = useContext(AuthContext);
 
   useEffect(() => {
-    
     console.log("user : ",user);
-  
-  }, [])
+  }, [user])
   
 
 

@@ -11,7 +11,11 @@ router.get('/google/callback', googlecallback );
 
 router.get('/check-logged', verfiytoken ,(req , res)=>{
     try{
-        res.json(req.user);
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        return res.json(req.user);
     }
     catch(error){
         console.log("user login pleas" , error)

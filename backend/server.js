@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 import { Server } from 'socket.io';
 import gameSetupSocket from './Sockets/gameSockets.js';
 
+import UserRoutes from './routes/UserRoutes.js'
 
 dotenv.config();
 
@@ -27,14 +28,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // allows orings defined
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS: " + origin));
-    }
-  },
+  origin : allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
@@ -66,6 +60,7 @@ if(process.env.MONGO_URI){
 }
 
 app.use('/auth', AuthRoutes); // tells routes for auth where to go
+app.use('/user' , UserRoutes)
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`) // in whch port app is runnnning

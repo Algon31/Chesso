@@ -17,7 +17,7 @@ export default function gameSetupSocket(io) {
             // if(!waitingQ.some(player => player.playerID) == playerID){ // check if same user is checking
                 waitingQ.push({playerID , socket});
             // } 
-            console.log(" wating queue : ",waitingQ);
+            // console.log(" wating queue : ",waitingQ);
         
             if(waitingQ.length <= 1){ // if no one is online it just adds to the queue
                 socket.emit('WatingForOpponent' , {message : "wait for someone..."})
@@ -82,9 +82,9 @@ export default function gameSetupSocket(io) {
                 
             } 
         });
-        socket.on('makeMove', async (gameID , from , to , playerID)=>{
+        socket.on('makeMove', async ({gameID , from , to , playerID})=>{
             const game = Games[gameID];
-            console.log(`made a move, from ${from} , to : ${to} by ${playerID} `);
+            console.log(`made a move, from ${from} , to : ${to} by player : ${playerID} `);
 
             if(!game){
                 socket.emit('error' , {
@@ -94,8 +94,9 @@ export default function gameSetupSocket(io) {
             }
 
             const chess = game.chess;
+            console.log("updated  chess " , chess);
             
-            if(currentplayer != playerID){
+            if(game.currentplayer != playerID){
                 socket.emit('error',{
                     message : 'Not Your Turn'
                 });
@@ -113,7 +114,7 @@ export default function gameSetupSocket(io) {
                 //     san: 'e4'     // Algebraic notation
                 // }
                 const updateboard = chess.fen();
-                const nextTurn = chess.turn() === 'W' ? game.player1 : game.player2; 
+                const nextTurn = chess.turn() === 'w' ? game.player1 : game.player2; 
 
 
                 if(Gameover(updateboard)){
@@ -130,16 +131,15 @@ export default function gameSetupSocket(io) {
                     game.currentplayer = nextTurn;
 
                     stopTimer(gameID , playerID === game.player1 ? 'player1' : 'player2');
-                    startTimer(gameID , nextTurn === gameplayer1 ? 'player1' : 'player2' , io);
-
+                    startTimer(gameID , nextTurn === game.player1 ? 'player1' : 'player2' , io);
+                    
                     io.to(gameID).emit('boardUpdate',{
                         board : updateboard,
                         turn : nextTurn,
                         timer : game.timer,
                     });
-                    
                     await Game.updateOne({_id : gameID} , {
-                        boardState : boardState,
+                        boardState : updateboard,
                         currentplayer : nextTurn,
                     })
                 }
@@ -184,7 +184,7 @@ function startTimer (gameID , player , io){
             
             const result = {WinnerID , draw : false , res : 'Time-out'};
 
-            io.on(gameID).emit('gameOver' , result);
+            io.to(gameID).emit('gameOver' , result);
 
             delete Games[gameID];
         }
@@ -211,21 +211,21 @@ function stopTimer(gameID , player){
 
 
 // checks wether the game is finished
-function Gameover (boradState){
-    const chess = new chess(boradState);
+function Gameover (boardState){
+    const chess = new Chess(boardState);
 
-    if(chess.checkMate() || chess.isDraw || chess.isStalemate() || chess.isInsufficientMaterial()){
+    if(chess.isCheckmate() || chess.isDraw || chess.isStalemate() || chess.isInsufficientMaterial()){
         return true;
     }else return false;
 }
 
 
 // return what happend at last
-function getGameResult(boradState , player1 , player2){
-    const chess = new chess(boradState);
+function getGameResult(boardState , player1 , player2){
+    const chess = new Chess(boardState);
 
-    if(chess.checkMate()){
-        const winnerID = chess.turn() === 'W' ? player1 : player2;
+    if(chess.isCheckmate()){
+        const winnerID = chess.turn() === 'w' ? player1 : player2;
         return {WinnerID : winnerID , res : 'CheckMate'};
     }
 

@@ -19,7 +19,8 @@ export const userAuth = () =>{
             const response = await fetch(`${BackEndUrl}/auth/register`,{ // calls the regiter from server
                 method : "POST", // tell them to create and return 
                 headers : {"Content-Type" : "application/json"},
-                body : JSON.stringify(userdata)
+                body : JSON.stringify(userdata),
+                credentials : "include",
             });
             const data = await response.json();
             
@@ -40,7 +41,7 @@ export const userAuth = () =>{
             }
         }
         catch(error){
-            toString.error(error);
+            toString.error(error.message);
         }
     }
     // for handling existing person

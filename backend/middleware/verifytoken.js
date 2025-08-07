@@ -6,8 +6,10 @@ dotenv.config();
 const verfiytoken = (req , res, next)=>{
     
     const token = req.cookies.jwtToken;
+    // console.log(req.cookies);
+
     if(!token){
-        // console.log("token was not found")
+        // console.log("token was not found", token);
         return res.status(401).json({message : "Access Denied"});
     }
     try{

@@ -3,18 +3,19 @@ import { io } from "socket.io-client"
 
 
 
-const socket = io(BackEndUrl, {
+const Socket = io(BackEndUrl, {
     withCredentials: true,
     transports : ['websocket'],
     reconnection  : true,
+    autoConnect : false
 })
 
-socket.on( 'connect', () =>{
+Socket.on( 'connect', () =>{
     console.log('connect to backend using socket');
 })
 
-socket.on('disconnect', (reason)=>{
+Socket.on('disconnect', (reason)=>{
     console.log("dissconnected socket :", reason);
 })
 
-export default socket;
+export default Socket;
