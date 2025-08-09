@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {userAuth} from "../../Auth/userAuth";
 import { toast } from 'sonner';
 import BackEndUrl from '../../utilites/config';
+import SocketStatus from '../../Components/SocketChecker';
 
 
 export default function Signin() {
@@ -84,6 +85,8 @@ export default function Signin() {
         </div>
         </div>
       </div>
+
     </div>
+
   );
 }

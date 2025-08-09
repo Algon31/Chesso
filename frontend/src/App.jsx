@@ -7,6 +7,7 @@ import Dashboard from './Pages/Dashboard/Dashboard';
 import { AuthProvider } from './context/AuthContext';
 import GamePage from './Pages/Dashboard/GamePage';
 import Board from './Pages/Game/Board';
+import SocketStatus from './Components/SocketChecker';
 // import SocketChecker from './Pages/Game/SocketChecker';
 
 function App() {
@@ -24,10 +25,10 @@ function App() {
             <Route path="/signup" element={<Signup/>} />
             <Route path="/signin" element={<Signin/>} />
             <Route path="/Dashboard" element={<Dashboard/>} />
-            <Route path="/Gamepage/:gameId" element={<GamePage/>}/>
+            <Route path="/Gamepage/:gameID" element={<GamePage/>}/>
           </Routes>
         </Router>
-
+          <SocketStatus/>
     </AuthProvider>
     </>
   )

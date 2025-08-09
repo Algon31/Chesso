@@ -5,38 +5,153 @@ import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "sonner";
-import LogoutButton from "../../Components/LogoutButton";
 import { useRef } from "react";
 import BackEndUrl from "../../utilites/config";
 import Socket from "../../utilites/Socket";
+import Exitgame from "../../Components/Exitgame";
+import PlayerDiv from "../../Components/PlayerDiv";
 
 export default function GamePage() {
-  const { gameId } = useParams(); // gameId will come from the react-router-dom
-  const { user, setuser } = useContext(AuthContext);
+  const { gameID } = useParams(); // gameId will come from the react-router-dom
+  const { user, setUser } = useContext(AuthContext);
   // console.log("user from start :",user);
-  const userSaved = localStorage.getItem("user");
-  const location = useLocation();
+  const userSaved = localStorage.getItem("userId");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const gameData = location.state?.gameData;
 
-  const [fen, setFen] = useState(gameData?.board || "start");
+  const [fen, setFen] = useState(gameData?.board);
   const [currentTurn, setCurrentTurn] = useState("white");
   const [myTime, setMyTime] = useState(300000);
   const [opponent, setopponent] = useState("unknown");
   const [opponentTime, setOpponentTime] = useState(300000);
   const chessRef = useRef(new Chess());
 
-  const isMyturn =
-    (currentTurn === "white" && gameData?.player1 === user) ||
-    (currentTurn === "black" && gameData?.player2 === user);
+  const Me = {
+    ID: user,
+    color: gameData?.color,
+  };
 
-  // useEffect(() => {
-  //   chessRef.current.load(gameData.board);
-  //   setFen(gameData.board);
-  // }, [gameData]);
+  let oppID = gameData?.player1 == user ? gameData?.player2 : gameData?.player1;
+  const opp = {
+    ID: oppID,
+    color: gameData?.color === "white" ? "black" : "white",
+  };
 
-  const ChessMove = (source, target) => {
+  useEffect(() => {
+    if (userSaved) {
+      // console.log("what is saved", userSaved);
+      // const userData = JSON.parse(userSaved);
+      setUser(userSaved);
+    } else {
+      toast.error("Please sign in to play", "error");
+      navigate("/signin");
+    }
+
+    Socket.emit("recoverGame", { gameID, playerID: userSaved });
+
+    Socket.on("recoverGameState", (data) => {
+      // console.log("gamedata on recovery : ", data);
+      setFen(data.board);
+      setCurrentTurn(data.turn);
+      if (!gameData) return;
+      gameData.player1 = data.player1;
+      gameData.player2 = data.player2;
+      gameData.color = data.color;
+
+      if (user === gameData.player1) {
+        setMyTime(data.timer.player1);
+        setOpponentTime(data.timer.player2);
+      } else {
+        setMyTime(data.timer.player2);
+        setOpponentTime(data.timer.player1);
+      }
+    });
+  }, [user]);
+
+  useEffect(() => {
+    // console.log(fen);
+    try {
+      chessRef.current.load(fen);
+    } catch (error) {
+      console.log("error in fen : ", error);
+    }
+  }, [fen]);
+  // console.log("game Data : ", gameData);
+
+
+
+  // console.log(`me ${Me.color} , opponent ${opp.color}`);
+
+  useEffect(() => {
+    const HandleTimerUpdate = (Ttimer) => {
+      if (user === gameData.player1) {
+        setMyTime(Ttimer.timer.player1);
+        setOpponentTime(Ttimer.timer.player2);
+      } else {
+        setMyTime(Ttimer.timer.player2);
+        setOpponentTime(Ttimer.timer.player1);
+      }
+    };
+
+    const HandleMove = ({ fen, turn }) => {
+      setFen(fen);
+      setCurrentTurn(turn);
+    };
+
+    const HandleBoardUpdate = (data) => {
+      setFen(data.board);
+      setCurrentTurn(data.turn);
+      if (user == data.player1) {
+        setMyTime(data.timer.player1);
+        setOpponentTime(data.timer.player2);
+      } else {
+        setMyTime(data.timer.player2);
+        setOpponentTime(data.timer.player1);
+      }
+    };
+
+    const HandleGameOver = (result) => {
+      if (result.draw) {
+        toast.success("Game Is draw");
+      } else if (result.WinnerID === user) {
+        if (result.res === "Time-Out") {
+          toast.success("You Win By Time out");
+        } else if (result.res === "CheckMate") {
+          toast.success("You Win By CheckMate");
+        } else {
+          toast.error("error in showing result");
+        }
+      } else {
+        if (result.res === "Time-Out") {
+          toast.success("You Lose By TimeOut");
+        } else if (result.res === "CheckMate") {
+          toast.success("You Lose By CheckMate");
+        } else {
+          toast.error("error showing result");
+        }
+      }
+    };
+
+    Socket.on("timerUpdate", HandleTimerUpdate);
+    Socket.on("makeMove", HandleMove);
+    Socket.on("boardUpdate", HandleBoardUpdate);
+    Socket.on("gameOver", HandleGameOver);
+
+    return () => {
+      Socket.off("timerUpdate", HandleTimerUpdate);
+      Socket.off("makeMove", HandleMove);
+      Socket.off("boardUpdate", HandleBoardUpdate);
+      Socket.off("gameOver", HandleGameOver);
+    };
+  }, [fen]);
+
+  const isMyturn = chessRef.current.turn() == Me.color[0];
+
+  // console.log("Socket connected to:", Socket.io.uri);
+
+  const ChessMoved = (source, target) => {
     console.log(`from : ${source} to : ${target}`);
     if (!isMyturn) {
       toast.success("not your turn !!");
@@ -48,105 +163,40 @@ export default function GamePage() {
     if (move) {
       setFen(chess.fen());
       Socket.emit("makeMove", {
-        gameId,
+        gameID,
         from: source,
         to: target,
         playerID: user,
       });
-      console.log(gameData?.turn);
-      setCurrentTurn(chess.turn() === "w" ? "white" : "black");
+      // console.log(gameData?.turn);
       return true;
     } else {
       toast.error("invalid move ! try Again");
       return false;
     }
   };
-  useEffect(() => {
-    const handleBoardUpdate = ({ fen: newFen, turn }) => {
-      chessRef.current.load(newFen);
-      setFen(newFen);
-      setCurrentTurn(turn);
-    };
+  const oppid = user === gameData?.player1 ? gameData?.player2 : gameData?.player1;
 
-    Socket.on("updateBoard", handleBoardUpdate);
-
-    return () => {
-      Socket.off("updateBoard", handleBoardUpdate);
-    };
-  }, []);
-
-  const getName = async () => {
-    try {
-      const oppid = user === gameData?.player1 ? gameData?.player2 : gameData?.player1;
-      console.log("opponent ID : ", oppid);
-      console.log("User ID : ", user);
-      // console.log(`${BackEndUrl}/user/${oppid}`);
-      const res = await fetch(`${BackEndUrl}/user/${oppid}`, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        console.log("oppo name : ", data.Name);
-        setopponent(data.name);
-      } else {
-        console.log("response is not okay ")
-        console.log("opponent error : ", res);
-      }
-    } catch (error) {
-      console.log("cnnot connect to bC", error);
-      toast.error("cannot connect to backend");
-    }
-  };
-
-  // useEffect(() => {
-  //   chessRef.current.load(fen);
-  // }, [fen]);
-
-  // sets the pieces properly
-  useEffect(() => {
-    if (gameData?.board) {
-      chessRef.current.load(gameData.board);
-      setFen(gameData.board);
-    }
-  }, [gameData]);
-
-  useEffect(() => {
-    // Socket.on(timer)
-    if (user) {
-      getName();
-    } else {
-      console.log("user yet to be foound");
-    }
-  }, [user]);
 
   return (
     <>
       <div className=" h-screen w-full flex">
         <div className="w-3/5 bg-[#B75A48] h-screen flex justify-center items-center">
-          <div className="w-xl h-xl border-8 border-[#d39e93] rounded-sm">
+          <div className="w-xl h-xl border-8 border-[#791602] rounded-sm">
             <Chessboard
               position={fen}
-              boardOrientation={gameData?.player1 === user ? "white" : "black"}
-              onPieceDrop={ChessMove}
+              boardOrientation={Me.color == "white" ? "white" : "black"}
+              onPieceDrop={ChessMoved}
             />
           </div>
         </div>
         <div className="w-2/5 bg-[#E8ECD6] h-screen">
-          <div className="w-full h-1/2 flex flex-col justify-center items-center border">
-            <div className="w-3/5 h-2/5 bg-black text-white">
-              player : {opponent}
-            </div>
-          </div>
-          <div className="w-full h-1/2 flex flex-col justify-center items-center border">
-            <div className="w-3/5 h-2/5 bg-black text-white">
-              You : {gameData?.name}
-            </div>
+          <PlayerDiv user={user} color={opp.color} timer={myTime} turn={currentTurn}/>
+          <PlayerDiv user={oppid} color={Me.color}timer={opponentTime} turn={currentTurn}/>
           </div>
         </div>
-      </div>
-      <LogoutButton />
+      <Exitgame/>
+      
     </>
   );
 }

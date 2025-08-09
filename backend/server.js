@@ -45,7 +45,7 @@ const io = new Server(server, {
   credentials : true,
 }}); 
 
-gameSetupSocket(io); // sets up game  
+gameSetupSocket(io); // sets up game
 
 
 if(process.env.MONGO_URI){
@@ -64,4 +64,5 @@ app.use('/user' , UserRoutes)
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`) // in whch port app is runnnning
+      // console.log("token passcode :",process.env.JWT_Secret_baby)
 })

@@ -8,6 +8,7 @@ import { AuthContext } from "../../context/AuthContext";
 import LogoutButton from "../../Components/LogoutButton";
 import BackEndUrl from "../../utilites/config";
 import { useEffect } from "react";
+import SocketStatus from "../../Components/SocketChecker";
 const socket = io(BackEndUrl);
 
 
@@ -55,6 +56,7 @@ export default function Dashboard() {
       
 
     </div>
+
     </>
   )
 }
@@ -76,7 +78,7 @@ function Button({user}){
         socket.emit("StartGame", PlayerID);
         console.log("PlayerID :", PlayerID);
 
-          socket.on("WatingForOpponent",(message)=>{
+          socket.on("waitingForOpponent",(message)=>{
             console.log("waitng message : ",message)
             toast.success("Wating For Opponents")
           });

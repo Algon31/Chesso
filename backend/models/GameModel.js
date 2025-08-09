@@ -23,7 +23,7 @@ const gameSchema = new mongoose.Schema({
         default : 'waiting',
     },
 
-    currentP : {
+    WinnerID : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
         default: null,

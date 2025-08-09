@@ -65,8 +65,8 @@ export const login =  async (req , res) =>{
         const jwtToken = user.generateAccessToken();
 
 
-        console.log("cookies : " , jwtToken);
-        res.cookie("jwToken" , jwtToken , {
+        // console.log("cookies : " , jwtToken);
+        res.cookie("jwtToken" , jwtToken , {
             httpOnly : true,
             secure : true, // for server it is true
             sameSite : "Lax", // for server its None

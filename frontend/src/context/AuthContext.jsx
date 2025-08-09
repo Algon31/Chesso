@@ -1,53 +1,79 @@
 import { createContext, useState, useEffect } from "react";
 import BackEndUrl from "../utilites/config";
 import { toast } from "sonner";
+import Socket from "../utilites/Socket";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  // here we created a gloabal user so that we can acess it across all the components and only if it is inside the authprovider in appjs
+  const [isConnected, setIsConnected] = useState(Socket.connected);
 
+  // Track socket connection status
   useEffect(() => {
-    ///saves the logged info and saves it  it localstorage and setUser
+    const handleConnect = () => {
+      setIsConnected(true);
+      console.log("✅ Socket connected:", Socket.id);
+    };
+
+    const handleDisconnect = (reason) => {
+      setIsConnected(false);
+      console.log("❌ Socket disconnected:", reason);
+    };
+
+    Socket.on("connect", handleConnect);
+    Socket.on("disconnect", handleDisconnect);
+
+    // You can manually connect here if needed
+    if (!Socket.connected) {
+      Socket.connect();
+    }
+
+    return () => {
+      Socket.off("connect", handleConnect);
+      Socket.off("disconnect", handleDisconnect);
+    };
+  }, []);
+
+  // Check if logged in
+  useEffect(() => {
     const checkStatus = async () => {
       try {
         const response = await fetch(`${BackEndUrl}/auth/check-logged`, {
           method: "GET",
           credentials: "include",
         });
-        // console.log("response from backend :",response)
+
         if (response.ok) {
           const jsondata = await response.json();
           setUser(jsondata._id);
-          console.log("user is being saved");
-          localStorage.setItem("userId", jsondata._id); // save to local data
+          console.log("User loaded:", jsondata._id);
+          localStorage.setItem("userId", jsondata._id);
         } else {
-          console.log("error checking logged info" , response);
-          // setUser(null);
-          // localStorage.removeItem('userId')
+          console.log("Error checking logged info", response);
         }
       } catch (error) {
-        toast.error(`error to check login: `);
+        toast.error("Error checking login status");
       }
     };
+
     checkStatus();
   }, []);
 
+  // Keep localStorage in sync with user
   useEffect(() => {
     if (user) {
       localStorage.setItem("userId", user);
-      console.log("user saved to local USER:", user);
     } else {
       const loc = localStorage.getItem("userId");
       if (loc) {
         setUser(loc);
       }
     }
-  }, [user]); //  sets user or takes from localstorage is user is changed
+  }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, isConnected }}>
       {children}
     </AuthContext.Provider>
   );

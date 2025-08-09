@@ -4,9 +4,9 @@ import User from "../models/UserModels.js";
 
 export const getUser = async (req , res)=>{
     const { id } = req.params;
-    console.log("die : ",id)
     try{
         const user = await User.findById(id);
+        // console.log("die : ",user)
         if(!user){
             return res.status(404).json({error : "user not found in DB"})
         }

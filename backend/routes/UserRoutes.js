@@ -4,13 +4,6 @@ import { getUser } from '../controllers/getUser.js';
 
 const router = express.Router();
 
-router.use('/:id' , verfiytoken , (req , res)=>{
-    try{
-        getUser
-    }
-    catch(error){
-        console.log("user not found" , error)
-    }
-});
+router.use('/:id' , verfiytoken , getUser);
 
 export default router;
