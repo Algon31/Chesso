@@ -40,7 +40,7 @@ export const googlecallback = (req,res)=>{ // this is called for verifying googl
     passport.authenticate("google" , (err, user , info)=>{
         if(!user || err ){
             console.log(err , "user : " , user);
-            return res.redirect(`${pFRONTEND_URL}/signin`); // if error redirects to signin
+            return res.redirect(`${FRONTEND_URL}/signin`); // if error redirects to signin
         }
 
         const jwtToken = user.generateAccessToken(); // generate tokken is called from models
