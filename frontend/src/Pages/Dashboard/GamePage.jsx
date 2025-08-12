@@ -45,6 +45,7 @@ export default function GamePage() {
       // const userData = JSON.parse(userSaved);
       setUser(userSaved);
     } else {
+      cd;
       toast.error("Please sign in to play", "error");
       navigate("/signin");
     }
@@ -61,11 +62,11 @@ export default function GamePage() {
       gameData.color = data.color;
 
       if (user === gameData.player1) {
-        setMyTime(data.timer.player1);
-        setOpponentTime(data.timer.player2);
-      } else {
         setMyTime(data.timer.player2);
         setOpponentTime(data.timer.player1);
+      } else {
+        setMyTime(data.timer.player1);
+        setOpponentTime(data.timer.player2);
       }
     });
   }, [user]);
@@ -80,18 +81,16 @@ export default function GamePage() {
   }, [fen]);
   // console.log("game Data : ", gameData);
 
-
-
   // console.log(`me ${Me.color} , opponent ${opp.color}`);
 
   useEffect(() => {
     const HandleTimerUpdate = (Ttimer) => {
       if (user === gameData.player1) {
-        setMyTime(Ttimer.timer.player1);
-        setOpponentTime(Ttimer.timer.player2);
-      } else {
         setMyTime(Ttimer.timer.player2);
         setOpponentTime(Ttimer.timer.player1);
+      } else {
+        setMyTime(Ttimer.timer.player1);
+        setOpponentTime(Ttimer.timer.player2);
       }
     };
 
@@ -104,30 +103,35 @@ export default function GamePage() {
       setFen(data.board);
       setCurrentTurn(data.turn);
       if (user == data.player1) {
-        setMyTime(data.timer.player1);
-        setOpponentTime(data.timer.player2);
-      } else {
         setMyTime(data.timer.player2);
         setOpponentTime(data.timer.player1);
+      } else {
+        setMyTime(data.timer.player1);
+        setOpponentTime(data.timer.player2);
       }
     };
 
     const HandleGameOver = (result) => {
       if (result.draw) {
         toast.success("Game Is draw");
+        navigate("/Dashboard");
       } else if (result.WinnerID === user) {
         if (result.res === "Time-Out") {
           toast.success("You Win By Time out");
+          navigate("/Dashboard");
         } else if (result.res === "CheckMate") {
           toast.success("You Win By CheckMate");
+          navigate("/Dashboard");
         } else {
           toast.error("error in showing result");
         }
       } else {
         if (result.res === "Time-Out") {
           toast.success("You Lose By TimeOut");
+          navigate("/Dashboard");
         } else if (result.res === "CheckMate") {
           toast.success("You Lose By CheckMate");
+          navigate("/Dashboard");
         } else {
           toast.error("error showing result");
         }
@@ -175,8 +179,8 @@ export default function GamePage() {
       return false;
     }
   };
-  const oppid = user === gameData?.player1 ? gameData?.player2 : gameData?.player1;
-
+  const oppid =
+    user === gameData?.player1 ? gameData?.player2 : gameData?.player1;
 
   return (
     <>
@@ -191,12 +195,21 @@ export default function GamePage() {
           </div>
         </div>
         <div className="w-2/5 bg-[#E8ECD6] h-screen">
-          <PlayerDiv user={user} color={opp.color} timer={myTime} turn={currentTurn}/>
-          <PlayerDiv user={oppid} color={Me.color}timer={opponentTime} turn={currentTurn}/>
-          </div>
+          <PlayerDiv
+            user={user}
+            color={opp.color}
+            timer={myTime}
+            turn={currentTurn}
+          />
+          <PlayerDiv
+            user={oppid}
+            color={Me.color}
+            timer={opponentTime}
+            turn={currentTurn}
+          />
         </div>
-      <Exitgame/>
-      
+      </div>
+      <Exitgame />
     </>
   );
 }
