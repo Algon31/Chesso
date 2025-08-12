@@ -1,6 +1,13 @@
 import User from '../models/UserModels.js';
 import passport from 'passport';
 
+// process.env.FrontEND = process.env.FrontEND_ENV === "production" ? 
+const FRONTEND_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.PFrontEND
+    : process.env.LFrontEND;
+
+
 
 
 export const register  =  async  (req,res)=>{
@@ -33,7 +40,7 @@ export const googlecallback = (req,res)=>{ // this is called for verifying googl
     passport.authenticate("google" , (err, user , info)=>{
         if(!user || err ){
             console.log(err , "user : " , user);
-            return res.redirect(`${process.env.FrontEND}/signin`); // if error redirects to signin
+            return res.redirect(`${pFRONTEND_URL}/signin`); // if error redirects to signin
         }
 
         const jwtToken = user.generateAccessToken(); // generate tokken is called from models
@@ -44,7 +51,7 @@ export const googlecallback = (req,res)=>{ // this is called for verifying googl
                 secure : true, // the cookie is sent through the http sever and no where else
                 samesite : "Lax",
             });
-            return res.redirect(`${process.env.FrontEND}/Dashboard`);
+            return res.redirect(`${FRONTEND_URL}/Dashboard`);
         }
     })(req , res);
 }   
