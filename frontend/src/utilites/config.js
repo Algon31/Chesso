@@ -1,4 +1,4 @@
-const Check = "production"
+const Check = "L"
 
 const LBackEndUrl = "http://localhost:3000";
 const PBackEndUrl = "https://chesso-ejb0.onrender.com";

@@ -22,9 +22,9 @@ app.use(express.json()); // when frontend sends info it make sure it reads prope
 const server = http.createServer(app);
 
 const allowedOrigins = [
-  process.env.FrontEND,
+  process.env.LFRONTEND,
+  process.env.PFRONTEND,
   process.env.FrontEND_origins,
-  process.env.FrontENDL,
 ];
 
 app.use(cors({

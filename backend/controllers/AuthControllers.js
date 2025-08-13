@@ -4,8 +4,8 @@ import passport from 'passport';
 // process.env.FrontEND = process.env.FrontEND_ENV === "production" ? 
 const FRONTEND_URL =
   process.env.NODE_ENV === "production"
-    ? process.env.PFrontEND
-    : process.env.LFrontEND;
+    ? process.env.PFRONTEND
+    : process.env.LFRONTEND;
 
 
 
