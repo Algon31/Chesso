@@ -21,14 +21,14 @@ app.use(express.json()); // when frontend sends info it make sure it reads prope
 
 const server = http.createServer(app);
 
-const allowedOrigins = [
-  // process.env.LFRONTEND,
-  process.env.FRONTEND,
-  process.env.FrontEND_origins,
-];
+// const allowedOrigins = [
+//   // process.env.LFRONTEND,
+//   process.env.FRONTEND,
+//   process.env.FrontEND_origins,
+// ];
 
 app.use(cors({
-  origin : allowedOrigins,
+  origin : process.env.FRONTEND,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 
 const io = new Server(server, {
   cors :{
-  origin : allowedOrigins,
+  origin : process.env.FRONTEND,
   methods :  ["GET", "POST", "PUT", "DELETE"],
   credentials : true,
 }}); 
