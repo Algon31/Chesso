@@ -1,7 +1,7 @@
 import passport from "passport";
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
 import dotenv from 'dotenv';
-// import BackEndUrl from '../utilites/config.js'
+import BackEndUrl from '../utilites/config.js'
 import User from "../models/UserModels.js";
 import bcrypt from 'bcrypt';
 
@@ -12,7 +12,7 @@ passport.use(
         {
             clientID : process.env.GOOGLE_CLIENT_ID,
             clientSecret : process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL : `${process.env.BackEndUrl}/auth/google/callback` // this is called for authentication of google user
+            callbackURL : `${BackEndUrl}/auth/google/callback` // this is called for authentication of google user
         },
         async (accesstoken , refreshToken , profile , done) =>{
 
