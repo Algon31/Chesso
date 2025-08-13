@@ -37,11 +37,13 @@ const AuthProvider = ({ children }) => {
 
   // Check if logged in
   useEffect(() => {
+     const controller = new AbortController();
     const checkStatus = async () => {
       try {
         const response = await fetch(`${BackEndUrl}/auth/check-logged`, {
           method: "GET",
           credentials: "include",
+          signal: controller.signal,
         });
 
         if (response.ok) {
