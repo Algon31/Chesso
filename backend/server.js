@@ -23,7 +23,7 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   process.env.LFRONTEND,
-  process.env.PFRONTEND,
+  process.env.FRONTEND,
   process.env.FrontEND_origins,
 ];
 
