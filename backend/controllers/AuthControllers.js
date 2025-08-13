@@ -51,7 +51,7 @@ export const googlecallback = (req,res)=>{ // this is called for verifying googl
             res.cookie("jwtToken", jwtToken ,{ // this is the cookie send to the browser(client's)
                 httpOnly : true, // in console it wont show
                 secure : true, // the cookie is sent through the http sever and no where else
-                samesite : "Lax",
+                samesite : "None",
             });
             return res.redirect(`${process.env.FRONTEND}/Dashboard`);
         }
@@ -78,7 +78,7 @@ export const login =  async (req , res) =>{
         res.cookie("jwtToken" , jwtToken , {
             httpOnly : true,
             secure : true, // for server it is true
-            sameSite : "Lax", // for server its None
+            sameSite : "None", // for server its None
             
         });
 
