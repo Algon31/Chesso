@@ -5,9 +5,11 @@ import Signin from './Pages/AuthPages/Signin';
 import { Toaster } from 'sonner';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import { AuthProvider } from './context/AuthContext';
-import GamePage from './Pages/Dashboard/GamePage';
-import Board from './Pages/Game/Board';
+import GamePage from './Pages/Game/GamePage';
+// import Board from './Pages/Game/Board';
 import SocketStatus from './Components/SocketChecker';
+import HomePage from './Pages/Dashboard/HomePage';
+import PageNotFound from './Pages/Dashboard/PageNotFound';
 // import SocketChecker from './Pages/Game/SocketChecker';
 
 function App() {
@@ -20,8 +22,9 @@ function App() {
         {/* <SocketChecker/> */}
         <Router>
           <Routes>
-            <Route path="/" element={<Dashboard/>} />
-            <Route path="/board" element={<Board/>} />
+            <Route path="/" element={<HomePage/>} />
+            <Route path="*" element={<PageNotFound/>} />
+            {/* <Route path="/board" element={<Board/>} /> */}
             <Route path="/signup" element={<Signup/>} />
             <Route path="/signin" element={<Signin/>} />
             <Route path="/Dashboard" element={<Dashboard/>} />

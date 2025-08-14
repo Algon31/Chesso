@@ -71,11 +71,6 @@ export const userAuth = () =>{
             console.log(error);
         }
     }
-    const Logout = () =>{
-        setUser(null);
-        localStorage.removeItem('userId');
-        navigate('/signin');
-    }
-    return {handleRegister , handleSignin , Logout};
+    return {handleRegister , handleSignin };
 };
 

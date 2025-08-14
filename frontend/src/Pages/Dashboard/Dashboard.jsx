@@ -26,7 +26,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="w-full h-screen bg-[#E8ECD6] m-0 relative">
+      <div className="w-full h-screen bg-[#E8ECD6] m-0 pt-5 relative">
         <Navbar />
         <LogoutButton />
         <div className="h-10" />

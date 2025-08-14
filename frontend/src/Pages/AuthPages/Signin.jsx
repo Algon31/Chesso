@@ -3,6 +3,7 @@ import {userAuth} from "../../Auth/userAuth";
 import { toast } from 'sonner';
 import BackEndUrl from '../../utilites/config';
 import SocketStatus from '../../Components/SocketChecker';
+import SampleVideo from '../../Components/SampleVideo';
 
 
 export default function Signin() {
@@ -35,14 +36,12 @@ export default function Signin() {
     }
   }
 
-
+const string = "Your strategy awaits. Let's make some smart moves!";
 
 
   return (
     <div className="bg-[#B75A48] flex justify-center items-center h-screen ">
-      <div className='w-1/2'>
-      {/* images */}
-      </div>
+      <SampleVideo texty={string}/>
       <div className='w-1/2 bg-[#E8ECD6] h-screen flex felx-row justify-center items-center'>
         <div className='w-3/4 h-3/4  flex flex-col justify-center items-center '>
         <div className='h-1/4 w-full flex flex-col justify-end items-center text-5xl text-[#B75A48] font-bold'>

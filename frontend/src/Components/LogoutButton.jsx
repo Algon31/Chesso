@@ -1,7 +1,10 @@
-import BackEndUrl from "../utilites/config";
+
+// import {userAuth} from '../Auth/userAuth'
+import { toast } from "sonner";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { toast } from "sonner";
+
+
 
 export default function LogoutButton() {
   const { setUser } = useContext(AuthContext);
@@ -27,8 +30,12 @@ export default function LogoutButton() {
   };
 
   return (
-    <button onClick={handleLogout} className="logout-button">
-      Logout
-    </button>
-  );
+    <>
+    <div 
+    onClick={handleLogout}
+    className='fixed top-5 right-5 bg-[#B75A48] rounded-sm w-12 h-12'>
+    
+    </div>
+    </>
+  )
 }

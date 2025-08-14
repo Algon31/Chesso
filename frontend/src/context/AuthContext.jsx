@@ -23,7 +23,7 @@ const AuthProvider = ({ children }) => {
         setUser(data._id);
       } catch (err) {
         if (err.name !== "AbortError") {
-          toast.error("Error checking login status");
+          console.log("Error checking login status");
         }
       }
     };
