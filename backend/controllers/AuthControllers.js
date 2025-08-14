@@ -97,3 +97,15 @@ export const login =  async (req , res) =>{
     }
 
 }
+
+export const logout = (req, res) => {
+  // Clear the JWT cookie
+  res.clearCookie('jwtToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    domain: process.env.NODE_ENV === 'production' ? '.chesso-ejb0.onrender.com' : undefined
+  });
+
+  return res.json({ message: 'Logged out successfully' });
+}

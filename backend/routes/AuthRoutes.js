@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register , Googlein , googlecallback , login } from "../controllers/AuthControllers.js";
+import { register , Googlein , googlecallback , login, logout } from "../controllers/AuthControllers.js";
 import { verfiytoken } from "../middleware/verifytoken.js";
 
 const router = Router()
@@ -14,6 +14,8 @@ router.get('/checklogged', verfiytoken ,(req , res)=>{
 });
 
 router.post('/signin' , login );
+
+router.post('/logout', logout);
 
 
 
