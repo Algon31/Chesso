@@ -47,6 +47,7 @@ export const googlecallback = (req , res )=>{ // this is called for verifying go
                 httpOnly : true, // in console it wont show
                 secure : process.env.NODE_ENV === "production", // the cookie is sent through the http sever and no where else
                 sameSite : "None",
+                domain: ".chesso-ejb0.onrender.com",
             });
             return res.redirect(`${process.env.FRONTEND}/Dashboard`);
         }
