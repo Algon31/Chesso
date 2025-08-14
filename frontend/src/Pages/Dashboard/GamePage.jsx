@@ -45,7 +45,6 @@ export default function GamePage() {
       // const userData = JSON.parse(userSaved);
       setUser(userSaved);
     } else {
-      cd;
       toast.error("Please sign in to play", "error");
       navigate("/signin");
     }
@@ -163,9 +162,12 @@ export default function GamePage() {
     }
     const chess = chessRef.current;
     const move = chess.move({ from: source, to: target, promotion: "q" });
-
+    try{
     if (move) {
       setFen(chess.fen());
+      if(chess.inCheck()){
+        toast.warning("check!!")
+      }
       Socket.emit("makeMove", {
         gameID,
         from: source,
@@ -178,6 +180,9 @@ export default function GamePage() {
       toast.error("invalid move ! try Again");
       return false;
     }
+  }catch{
+    toast.warning("invalid Move")
+  }
   };
   const oppid =
     user === gameData?.player1 ? gameData?.player2 : gameData?.player1;

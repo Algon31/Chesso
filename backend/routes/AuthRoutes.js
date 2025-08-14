@@ -18,7 +18,8 @@ router.get('/check-logged', verfiytoken ,(req , res)=>{
         return res.json(req.user);
     }
     catch(error){
-        console.log("user login pleas" , error)
+        console.log("user login pleas" , error);
+        return res.status(500).json({message : " internal server error"});
     }
 });
 

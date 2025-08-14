@@ -43,7 +43,7 @@ const AuthProvider = ({ children }) => {
         const response = await fetch(`${BackEndUrl}/auth/check-logged`, {
           method: "GET",
           credentials: "include",
-          signal: controller.signal,
+          // signal: controller.signal,
         });
 
         if (response.ok) {
