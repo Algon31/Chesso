@@ -9,18 +9,8 @@ router.post('/register', register); // for regitser sends the register function 
 router.get('/google', Googlein)  // we should use get
 router.get('/google/callback', googlecallback );
 
-router.get('/check-logged', verfiytoken ,(req , res)=>{
-    try{
-        if (!req.user) {
-            return res.status(401).json({ message: req.user });
-        }
-
+router.get('/checklogged', verfiytoken ,(req , res)=>{
         return res.json(req.user);
-    }
-    catch(error){
-        console.log("user login pleas" , error);
-        return res.status(500).json({message : " internal server error"});
-    }
 });
 
 router.post('/signin' , login );

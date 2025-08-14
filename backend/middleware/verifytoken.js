@@ -6,13 +6,13 @@ dotenv.config();
 const verfiytoken = (req , res, next)=>{
     
     const token = req.cookies.jwtToken;
-    // console.log("Cookies received:", req.cookies);
+    console.log("Cookies received:", req.cookies);
 
     // console.log("here is the token : ",req.cookies.jwtToken);
 
     // console.log("token passcode :",process.env.JWT_Secret_baby)
+    console.log("token :", token);
     if(!token){
-        console.log("token was not found", token);
         return res.status(401).json({message : "ok buddy token is invalid"});
     }
     try{

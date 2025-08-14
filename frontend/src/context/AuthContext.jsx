@@ -40,7 +40,7 @@ const AuthProvider = ({ children }) => {
      const controller = new AbortController();
     const checkStatus = async () => {
       try {
-        const response = await fetch(`${BackEndUrl}/auth/check-logged`, {
+        const response = await fetch(`${BackEndUrl}/auth/checklogged`, {
           method: "GET",
           credentials: "include",
           // signal: controller.signal,
