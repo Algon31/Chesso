@@ -1,14 +1,9 @@
 import User from '../models/UserModels.js';
 import passport from 'passport';
 import dotenv from 'dotenv';
-
-// process.env.FrontEND = process.env.FrontEND_ENV === "production" ? 
-const FRONTEND_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.FRONTEND
-    : process.env.LFRONTEND;
-
 dotenv.config();
+
+
 
 
 
@@ -38,14 +33,14 @@ export const Googlein = passport.authenticate("google" , {
     scope : ["profile" , "email"],
 });
 
-export const googlecallback = (req,res)=>{ // this is called for verifying google user
-    passport.authenticate("google" , (err, user , info)=>{
+export const googlecallback = (req , res )=>{ // this is called for verifying google user
+    passport.authenticate("google" , (err, jwtToken , user)=>{
         if(!user || err ){
             console.log(err , "user : " , user);
             return res.redirect(`${process.env.FRONTEND}/signin`); // if error redirects to signin
         }
 
-        const jwtToken = user.generateAccessToken(); // generate tokken is called from models
+        // const jwtToken = user.generateAccessToken(); // generate tokken is called from models
 
         if(jwtToken){ 
             res.cookie("jwtToken", jwtToken ,{ // this is the cookie send to the browser(client's)
@@ -55,7 +50,8 @@ export const googlecallback = (req,res)=>{ // this is called for verifying googl
             });
             return res.redirect(`${process.env.FRONTEND}/Dashboard`);
         }
-    })(req , res);
+        res.redirect(`${process.env.FRONTEND}/signin`)
+    })(req , res );
 }   
 
 export const login =  async (req , res) =>{

@@ -9,33 +9,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isConnected, setIsConnected] = useState(Socket.connected);
 
-  // Track socket connection status
-  useEffect(() => {
-    const handleConnect = () => {
-      setIsConnected(true);
-      console.log("✅ Socket connected:", Socket.id);
-    };
-
-    const handleDisconnect = (reason) => {
-      setIsConnected(false);
-      console.log("❌ Socket disconnected:", reason);
-    };
-
-    Socket.on("connect", handleConnect);
-    Socket.on("disconnect", handleDisconnect);
-
-    // You can manually connect here if needed
-    if (!Socket.connected) {
-      Socket.connect();
-    }
-
-    return () => {
-      Socket.off("connect", handleConnect);
-      Socket.off("disconnect", handleDisconnect);
-    };
-  }, []);
-
-  // Check if logged in
+  // Check if logged in on mount
   useEffect(() => {
     const controller = new AbortController();
     const checkStatus = async () => {
@@ -56,6 +30,39 @@ const AuthProvider = ({ children }) => {
     checkStatus();
     return () => controller.abort();
   }, []);
+
+  // Connect socket only if user is logged in
+  useEffect(() => {
+    if (!user) {
+      if (Socket.connected) {
+        Socket.disconnect();
+        setIsConnected(false);
+      }
+      return;
+    }
+
+    const handleConnect = () => {
+      setIsConnected(true);
+      console.log("✅ Socket connected:", Socket.id);
+    };
+
+    const handleDisconnect = (reason) => {
+      setIsConnected(false);
+      console.log("❌ Socket disconnected:", reason);
+    };
+
+    Socket.on("connect", handleConnect);
+    Socket.on("disconnect", handleDisconnect);
+
+    if (!Socket.connected) {
+      Socket.connect();
+    }
+
+    return () => {
+      Socket.off("connect", handleConnect);
+      Socket.off("disconnect", handleDisconnect);
+    };
+  }, [user]);
 
   // Keep localStorage in sync with user
   useEffect(() => {

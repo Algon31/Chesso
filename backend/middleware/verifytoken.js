@@ -13,6 +13,7 @@ const verfiytoken = (req , res, next)=>{
     // console.log("token passcode :",process.env.JWT_Secret_baby)
     console.log("token :", token);
     if(!token){
+        console.log("token not found:", token);
         return res.status(401).json({message : "ok buddy token is invalid"});
     }
     try{
@@ -26,9 +27,4 @@ const verfiytoken = (req , res, next)=>{
     
 }
 
-
-
-
 export {verfiytoken};
-
-
