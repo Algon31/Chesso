@@ -15,9 +15,10 @@ import UserRoutes from './routes/UserRoutes.js'
 
 dotenv.config();
 
-app.use(cookieParser()); //  now it can read cookies sent by client
 
 app.use(express.json()); // when frontend sends info it make sure it reads properly
+
+app.use(cookieParser()); //  now it can read cookies sent by client
 
 const server = http.createServer(app);
 
