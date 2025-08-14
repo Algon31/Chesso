@@ -37,29 +37,24 @@ const AuthProvider = ({ children }) => {
 
   // Check if logged in
   useEffect(() => {
-     const controller = new AbortController();
+    const controller = new AbortController();
     const checkStatus = async () => {
       try {
-        const response = await fetch(`${BackEndUrl}/auth/checklogged`, {
-          method: "GET",
+        const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
           credentials: "include",
-          // signal: controller.signal,
+          signal: controller.signal,
         });
-
-        if (response.ok) {
-          const jsondata = await response.json();
-          setUser(jsondata._id);
-          console.log("User loaded:", jsondata._id);
-          localStorage.setItem("userId", jsondata._id);
-        } else {
-          console.log("Error checking logged info", response);
+        if (!res.ok) return;
+        const data = await res.json();
+        setUser(data._id);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          toast.error("Error checking login status");
         }
-      } catch (error) {
-        toast.error("Error checking login status");
       }
     };
-
     checkStatus();
+    return () => controller.abort();
   }, []);
 
   // Keep localStorage in sync with user
