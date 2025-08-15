@@ -6,7 +6,6 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "sonner";
 import { useRef } from "react";
-import BackEndUrl from "../../utilites/config";
 import Socket from "../../utilites/Socket";
 import Exitgame from "../../Components/Exitgame";
 import PlayerDiv from "../../Components/PlayerDiv";

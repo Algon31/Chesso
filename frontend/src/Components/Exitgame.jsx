@@ -9,6 +9,7 @@ export default function Exitgame() {
   const { user } = useContext(AuthContext);
 
   const HandleExit = () => {
+    toast.warning("You Resigned!");
     Socket.emit("Resign", { gameID, playerID: user });
   };
   return (
