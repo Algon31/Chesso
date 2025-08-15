@@ -118,7 +118,7 @@ export default function GamePage() {
           toast.success("You Won By CheckMate");
           // navigate("/Dashboard");
         } else if(result.res === "Resignation"){
-          toast.success("You Won By Resignation");
+          toast.success("You Lose By Resignation");
         }else
           {
           toast.error("error in showing result");
@@ -131,7 +131,7 @@ export default function GamePage() {
           toast.success("You Lose By CheckMate");
           // navigate("/Dashboard");
         } else if(result.res === "Resignation"){
-          toast.success("You Lose By Resignation");
+          toast.success("You Won By Resignation");
         } else {
           toast.error("error showing result");
         }
