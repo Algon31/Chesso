@@ -12,23 +12,22 @@ export default function gameSetupSocket(io) {
         console.log("new user connected and ID is:", socket.id);
 
         socket.on("StartGame", async (playerID) => {
-            console.log("player joined :", playerID);
+            console.log("player joined:", playerID);
 
-            if (waitingQ.length == 0) {
+            // Prevent same player from being queued twice
+            if (waitingQ.some(entry => entry.playerID === playerID)) {
+                socket.emit('waitingForOpponent', {
+                    message: "waiting for opponent"
+                });
+                return;
+            }
+
+            if (waitingQ.length === 0) {
                 waitingQ.push({ playerID, socket });
                 socket.emit('waitingForOpponent', {
                     message: "waiting for opponent"
                 });
-            }
-            // console.log(" wating queue : ",waitingQ);
-            else {
-
-                // if (waitingQ.some(entry => entry.playerID === playerID)) {
-                //     socket.emit('waitingForOpponent', {
-                //         message: "waiting for opponent"
-                //     });
-                //     return;
-                // }
+            } else {
                 const opponent = waitingQ.shift(); // removes the first element and retuns the element from array
 
                 const newGame = new Game({
@@ -199,16 +198,16 @@ export default function gameSetupSocket(io) {
             });
 
         })
-        socket.on('Resign',({gameID , PlayerID})=>{
+        socket.on('Resign', ({ gameID, PlayerID }) => {
             const game = Games[gameID];
-            if(!game) return;
+            if (!game) return;
 
             const opponentID = PlayerID === game.player1 ? game.player2 : game.player1;
 
-            io.to(gameID).emit('gameOver',{
-                WinnerID : opponentID,
-                res : "Resignation",
-                draw : false,
+            io.to(gameID).emit('gameOver', {
+                WinnerID: opponentID,
+                res: "Resignation",
+                draw: false,
             });
             delete Games[gameID];
         });

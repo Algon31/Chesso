@@ -77,9 +77,6 @@ export default function GamePage() {
       console.log("error in fen : ", error);
     }
   }, [fen]);
-  // console.log("game Data : ", gameData);
-
-  // console.log(`me ${Me.color} , opponent ${opp.color}`);
 
   useEffect(() => {
     const HandleTimerUpdate = (Ttimer) => {
@@ -141,8 +138,8 @@ export default function GamePage() {
       }
     
       setTimeout(() => {
-        navigate('/Dashboard')
-      }, 3000);
+        navigate('/Dashboard');
+      }, 5000);
       
     };
 
