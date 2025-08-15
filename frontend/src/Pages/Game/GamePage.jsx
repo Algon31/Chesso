@@ -113,28 +113,38 @@ export default function GamePage() {
     const HandleGameOver = (result) => {
       if (result.draw) {
         toast.success("Game Is draw");
-        navigate("/Dashboard");
+        // navigate("/Dashboard");
       } else if (result.WinnerID === user) {
         if (result.res === "Time-Out") {
-          toast.success("You Win By Time out");
-          navigate("/Dashboard");
+          toast.success("You Won By Time out");
+          // navigate("/Dashboard");
         } else if (result.res === "CheckMate") {
-          toast.success("You Win By CheckMate");
-          navigate("/Dashboard");
-        } else {
+          toast.success("You Won By CheckMate");
+          // navigate("/Dashboard");
+        } else if(result.res === "Resignation"){
+          toast.success("You Won By Resignation");
+        }else
+          {
           toast.error("error in showing result");
         }
       } else {
         if (result.res === "Time-Out") {
           toast.success("You Lose By TimeOut");
-          navigate("/Dashboard");
+          // navigate("/Dashboard");
         } else if (result.res === "CheckMate") {
           toast.success("You Lose By CheckMate");
-          navigate("/Dashboard");
+          // navigate("/Dashboard");
+        } else if(result.res === "Resignation"){
+          toast.success("You Lose By Resignation");
         } else {
           toast.error("error showing result");
         }
       }
+    
+      setTimeout(() => {
+        navigate('/Dashboard')
+      }, 3000);
+      
     };
 
     Socket.on("timerUpdate", HandleTimerUpdate);

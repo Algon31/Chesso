@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Signup from './Pages/AuthPages/Signup'
 import Signin from './Pages/AuthPages/Signin';
-import { Toaster } from 'sonner';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import { AuthProvider } from './context/AuthContext';
 import GamePage from './Pages/Game/GamePage';
@@ -10,6 +9,7 @@ import GamePage from './Pages/Game/GamePage';
 import SocketStatus from './Components/SocketChecker';
 import HomePage from './Pages/Dashboard/HomePage';
 import PageNotFound from './Pages/Dashboard/PageNotFound';
+import Toaster from './Components/Toaster';
 // import SocketChecker from './Pages/Game/SocketChecker';
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
     <>
     <AuthProvider> 
 
-        <Toaster position="top-center" richColors />
+        <Toaster/>
         {/* <SocketChecker/> */}
         <Router>
           <Routes>

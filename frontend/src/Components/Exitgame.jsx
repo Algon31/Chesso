@@ -1,11 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Exitgame() {
-  const navigate = useNavigate();
+  const { gameID } = useParams();
+  const { user } = useContext(AuthContext);
+
   const HandleExit = () => {
-    toast.error("Exiting ");
-    navigate("/Dashboard");
+    Socket.emit("Resign", { gameID, playerID: user });
   };
   return (
     <>

@@ -199,6 +199,19 @@ export default function gameSetupSocket(io) {
             });
 
         })
+        socket.on('Resign',({gameID , PlayerID})=>{
+            const game = Games[gameID];
+            if(!game) return;
+
+            const opponentID = PlayerID === game.player1 ? game.player2 : game.player1;
+
+            io.to(gameID).emit('gameOver',{
+                WinnerID : opponentID,
+                res : "Resignation",
+                draw : false,
+            });
+            delete Games[gameID];
+        });
 
         socket.on('disconnect', () => {
             console.log('diconnectd client')
