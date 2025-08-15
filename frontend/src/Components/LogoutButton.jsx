@@ -21,7 +21,7 @@ export default function LogoutButton() {
       setUser(null);
       localStorage.removeItem("userId");
       toast.success("Logged out successfully");
-      navigate("/login");
+      navigate("/signin");
     } catch (err) {
       console.error(err);
       toast.error("Error logging out");
