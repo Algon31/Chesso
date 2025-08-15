@@ -176,7 +176,7 @@ export default function GamePage() {
     if (move) {
       setFen(chess.fen());
       if(chess.inCheck()){
-        toast.warning("check!!")
+        if(!chess.isCheckmate()) toast.warning("check!!");
       }
       Socket.emit("makeMove", {
         gameID,

@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { AuthContext } from "../context/AuthContext";
+import Socket from "../utilites/Socket";
 
 export default function Exitgame() {
   const { gameID } = useParams();
