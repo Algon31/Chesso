@@ -3,7 +3,7 @@ import chessvideo from "/assets/videos/chess.mp4";
 
 export default function SampleVideo({ texty }) {
   return (
-    <div className="w-1/2 h-screen relative overflow-hidden">
+    <div className="w-full h-screen relative overflow-hidden">
       {/* Video */}
       <video
         className="w-full h-full object-cover object-center"

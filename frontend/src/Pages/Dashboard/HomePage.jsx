@@ -16,12 +16,15 @@ export default function HomePage() {
 
   return (
     <>
+    <div className="hidden md:block">
+
       <Navbar />
       <LogoutButton />
+    </div>
 
       <div className="w-full h-screen flex flex-col justify-center items-center bg-[#E8ECD6]">
         {/* Hero Section */}
-        <div className="relative h-1/2 w-2/3 flex justify-center items-center text-white text-5xl font-bold rounded-xl overflow-hidden group">
+        <div className="relative h-100 w-70 md:h-1/2 md:w-2/3 flex justify-center items-center text-white text-5xl font-bold rounded-xl overflow-hidden group">
           {/* Background Image */}
           <div
             className="absolute inset-0 bg-cover bg-center transform transition-transform duration-500 ease-in-out group-hover:scale-105"

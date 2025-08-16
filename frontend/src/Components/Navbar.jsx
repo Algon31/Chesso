@@ -29,7 +29,7 @@ export default function Navbar() {
               location.pathname === "/facts" ? "bg-[#843E34]" : ""
             }`}
           >
-            <a href="/facts">Facts</a>
+            <a href="/Facts">Facts</a>
           </li>
         </ol>
       </div>

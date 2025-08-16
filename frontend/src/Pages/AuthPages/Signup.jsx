@@ -37,11 +37,13 @@ export default function Signup() {
   const string = "Every grandmaster starts with a single move. Begin your journey!"
 
   return (
-    <div className="bg-[#B75A48] flex justify-center items-center h-screen ">
+    <div className="bg-[#B75A48] md:flex md:justify-center md:items-center h-screen">
+      <div className="w-1/2 hidden md:block">
       <SampleVideo texty={string}/>
-      <div className="w-1/2 bg-[#E8ECD6] h-screen flex felx-row justify-center items-center">
+      </div>
+      <div className="w-full md:w-1/2 bg-[#E8ECD6] h-screen flex felx-row justify-center items-center">
         <div className="w-3/4 h-3/4  flex flex-col justify-center items-center ">
-          <div className="h-1/4 w-full flex flex-col justify-end items-center text-5xl text-[#B75A48] text-shadow-slate-900 font-bold">
+          <div className="h-1/4 w-full flex flex-col justify-end items-center text-5xl text-[#B75A48] text-shadow-slate-900 font-bold pb-8 md:pb-0 text-center">
             Welcome Aboard !
           </div>
           <div className="w-full h-3/4 flex flex-col justify-center items-center">
@@ -50,31 +52,31 @@ export default function Signup() {
               value={Name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Name"
-              className="w-3/5 h-12 p-2 rounded  text-[#B75A48]  m-2 mt-0 border-2 border-[#B75A48]"
+              className="w-full md:w-3/5 h-12 p-2 rounded  text-[#B75A48]  m-2 mt-0 border-2 border-[#B75A48]"
             />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Your Email"
-              className="w-3/5 h-12 p-2 rounded  text-[#B75A48]  m-2 border-2 border-[#B75A48]"
+              className="w-full md:w-3/5 h-12 p-2 rounded  text-[#B75A48]  m-2 border-2 border-[#B75A48]"
             />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-3/5 h-12 p-2 rounded text-s text-[#B75A48] font-bold m-2 border-2 border-[#B75A48]"
+              className="w-full md:w-3/5 h-12 p-2 rounded text-s text-[#B75A48] font-bold m-2 border-2 border-[#B75A48]"
             />
             <button
               onClick={Handlesignup}
-              className="w-3/5 h-12 p-2 bg-[#B75A48] text-[#E8ECD6] mt-4 rounded-sm hover:cursor-pointer"
+              className="w-full md:w-3/5 h-12 p-2 bg-[#B75A48] text-[#E8ECD6] mt-4 rounded-sm hover:cursor-pointer"
             >
               Sign up
             </button>
             <button
               onClick={HandleGoogleIn}
-              className="w-3/5 h-12 p-2 mt-4 rounded-sm border-2 border-[#B75A48]  text-[#B75A48] font-bold hover:cursor-pointer"
+              className="w-full md:w-3/5 h-12 p-2 mt-4 rounded-sm border-2 border-[#B75A48]  text-[#B75A48] font-bold hover:cursor-pointer"
             >
               Google
             </button>

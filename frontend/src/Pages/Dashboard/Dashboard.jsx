@@ -26,12 +26,13 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="w-full h-screen bg-[#E8ECD6] m-0 pt-5 relative">
-        <Navbar />
-        <LogoutButton />
-        <div className="h-10" />
-        <div className="w-full flex ">
-          <div className="w-1/2  h-150 flex justify-center items-center">
+      <div className="w-full h-screen bg-[#E8ECD6] m-0 md:pt-15 relative">
+        <div className="hidden md:block">
+          <Navbar />
+          <LogoutButton />
+        </div>
+        <div className="md:w-full flex justify-center h-full">
+          <div className="w-1/2  h-150 hidden md:flex justify-center items-center">
             {/*image chess*/}
             <img
               src="/assets/Imgs/chessboard.png"
@@ -39,17 +40,17 @@ export default function Dashboard() {
               className="w-125"
             />
           </div>
-          <div className="w-1/2  h-150 flex items-center">
-            <div className="w-2/3 h-3/4  ml-10 rounded-xl flex flex-col items-center pt-10">
-              <span className="text-5xl text-[#B75A48] font-bold ">
+          <div className=" w-full justify-center md:justify-start md:w-1/2  h-full flex items-center">
+            <div className="w-full md:w-2/3 h-3/4  md:ml-10 rounded-sm flex flex-col items-center md:pt-10">
+              <span className="text-5xl text-[#B75A48] font-bold text-center">
                 Lets Play the Game !
               </span>
-              <span className="w-2/3 text-center pt-3 text-[#B75A48]">
+              <span className="w-70 mb-5 md:mb-0 md:w-2/3  text-center p-3 text-[#B75A48]">
                 Make your way to the top, and increase your problem solving
                 skills. Make your opponents know who's playing...
               </span>
-              <div className="w-full h-30 flex items-center pl-20">
-                <div className="w-35 h-12 bg-[#B75A48] rounded-sm text-white flex justify-center items-center px-3">
+              <div className="w-full h-30 flex flex-col md:flex-row md:items-center md:pl-20 items-center">
+                <div className=" w-30 h-10 md:w-35 text-sm md:text-lg md:h-12 bg-[#B75A48] rounded-sm text-white flex justify-center items-center px-3">
                   <img
                     src="/assets/Svgs/timer.svg"
                     alt="timer"
@@ -58,7 +59,7 @@ export default function Dashboard() {
                   10 min
                 </div>
 
-                <div className="w-35 h-12 bg-[#B75A48] ml-20 rounded-sm text-white flex justify-center items-center">
+                <div className=" w-30 h-10 md:w-40 md:h-12 text-xs md:text-lg bg-[#B75A48] mt-2 md:mt-0 md:ml-20 rounded-sm text-white flex justify-center items-center">
                   <img
                     src="/assets/Svgs/pawn.svg"
                     alt="timer"
@@ -108,13 +109,13 @@ function Button({ user }) {
   return (
     <>
       <div
-        className="bg-[#B75A48] w-70 h-18 rounded-2xl text-center flex justify-center items-center content-center text cursor-pointer"
+        className="bg-[#B75A48] w-40 md:w-70 h-12 md:h-18 rounded-sm md:rounded-xl  text-center md:mt-5 flex justify-center items-center content-center text cursor-pointer"
         onClick={HandleStart}
       >
         <img
           src="/assets/Svgs/game-start.svg"
           alt="start"
-          className="w-10 h-10 mr-3"
+          className="w-6 md:w-10 md:h-10 mr-3"
         />
         Start Game
       </div>

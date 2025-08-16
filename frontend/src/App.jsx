@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Signup from './Pages/AuthPages/Signup'
 import Signin from './Pages/AuthPages/Signin';
 import Dashboard from './Pages/Dashboard/Dashboard';
@@ -12,28 +12,41 @@ import PageNotFound from './Pages/Dashboard/PageNotFound';
 import Toaster from './Components/Toaster';
 // import SocketChecker from './Pages/Game/SocketChecker';
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+  const onGamePage = location.pathname.startsWith("/Gamepage");
 
   return (
     <>
-    <AuthProvider> 
+      <Toaster/>
+      <Routes>
+        <Route path="/" element={<HomePage/>} />
+        <Route path="*" element={<PageNotFound/>} />
+        {/* <Route path="/board" element={<Board/>} /> */}
+        <Route path="/signup" element={<Signup/>} />
+        <Route path="/signin" element={<Signin/>} />
+        <Route path="/Dashboard" element={<Dashboard/>} />
+        <Route path="/Gamepage/:gameID" element={<GamePage/>}/>
+      </Routes>
 
-        <Toaster/>
-        {/* <SocketChecker/> */}
-        <Router>
-          <Routes>
-            <Route path="/" element={<HomePage/>} />
-            <Route path="*" element={<PageNotFound/>} />
-            {/* <Route path="/board" element={<Board/>} /> */}
-            <Route path="/signup" element={<Signup/>} />
-            <Route path="/signin" element={<Signin/>} />
-            <Route path="/Dashboard" element={<Dashboard/>} />
-            <Route path="/Gamepage/:gameID" element={<GamePage/>}/>
-          </Routes>
-        </Router>
-          <SocketStatus/>
-    </AuthProvider>
+      {/* ✅ Hide in mobile when on GamePage */}
+      {!onGamePage && <SocketStatus />}
+      {onGamePage && (
+        <div className="hidden md:block"> 
+          <SocketStatus />
+        </div>
+      )}
     </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   )
 }
 

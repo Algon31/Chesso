@@ -117,10 +117,9 @@ export default function GamePage() {
         } else if (result.res === "CheckMate") {
           toast.success("You Won By CheckMate");
           // navigate("/Dashboard");
-        } else if(result.res === "Resignation"){
+        } else if (result.res === "Resignation") {
           toast.success("You Lose By Resignation");
-        }else
-          {
+        } else {
           toast.error("error in showing result");
         }
       } else {
@@ -130,17 +129,16 @@ export default function GamePage() {
         } else if (result.res === "CheckMate") {
           toast.success("You Lose By CheckMate");
           // navigate("/Dashboard");
-        } else if(result.res === "Resignation"){
+        } else if (result.res === "Resignation") {
           toast.success("You Won By Resignation");
         } else {
           toast.error("error showing result");
         }
       }
-    
+
       setTimeout(() => {
         navigate('/Dashboard');
       }, 5000);
-      
     };
 
     Socket.on("timerUpdate", HandleTimerUpdate);
@@ -168,27 +166,27 @@ export default function GamePage() {
     }
     const chess = chessRef.current;
     const move = chess.move({ from: source, to: target, promotion: "q" });
-    try{
-    if (move) {
-      setFen(chess.fen());
-      if(chess.inCheck()){
-        if(!chess.isCheckmate()) toast.warning("check!!");
+    try {
+      if (move) {
+        setFen(chess.fen());
+        if (chess.inCheck()) {
+          if (!chess.isCheckmate()) toast.warning("check!!");
+        }
+        Socket.emit("makeMove", {
+          gameID,
+          from: source,
+          to: target,
+          playerID: user,
+        });
+        // console.log(gameData?.turn);
+        return true;
+      } else {
+        toast.error("invalid move ! try Again");
+        return false;
       }
-      Socket.emit("makeMove", {
-        gameID,
-        from: source,
-        to: target,
-        playerID: user,
-      });
-      // console.log(gameData?.turn);
-      return true;
-    } else {
-      toast.error("invalid move ! try Again");
-      return false;
+    } catch {
+      toast.warning("invalid Move");
     }
-  }catch{
-    toast.warning("invalid Move")
-  }
   };
   const oppid =
     user === gameData?.player1 ? gameData?.player2 : gameData?.player1;
@@ -196,8 +194,16 @@ export default function GamePage() {
   return (
     <>
       <div className=" h-screen w-full flex">
-        <div className="w-3/5 bg-[#B75A48] h-screen flex justify-center items-center">
-          <div className="w-xl h-xl border-8 border-[#791602] rounded-sm">
+        <div className="w-full md:w-3/5 bg-[#B75A48] h-screen flex justify-center items-center">
+          <div className="block fixed z-10 top-4 left-4 md:hidden w-60 h-25 bg-amber-900">
+            <PlayerDiv
+              user={oppid}
+              color={Me.color}
+              timer={opponentTime}
+              turn={currentTurn}
+            />
+          </div>
+          <div className="w-75 md:w-xl md:h-xl border-8 border-[#791602] rounded-sm">
             <Chessboard
               position={fen}
               boardOrientation={Me.color == "white" ? "white" : "black"}
@@ -205,7 +211,15 @@ export default function GamePage() {
             />
           </div>
         </div>
-        <div className="w-2/5 bg-[#E8ECD6] h-screen">
+        <div className="block fixed z-10 bottom-4 right-4 md:hidden w-60 h-25 bg-amber-900">
+          <PlayerDiv
+            user={user}
+            color={opp.color}
+            timer={myTime}
+            turn={currentTurn}
+          />
+        </div>
+        <div className="hidden md:block md:w-2/5 bg-[#E8ECD6] h-screen">
           <PlayerDiv
             user={user}
             color={opp.color}

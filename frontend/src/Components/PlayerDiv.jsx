@@ -45,8 +45,8 @@ export default function PlayerDiv({ user, color, timer, turn }) {
   const timerBgClass = isMyTurn ? "bg-green-500" : "bg-[#b2acac]"; // green when active, grey when not
 
   return (
-    <div className="w-full h-1/2 flex flex-col justify-center items-center border ">
-      <div className="w-3/5 h-2/5 bg-[#B75A48] text-white flex flex-col rounded-sm">
+    <div className="w-full h-full md:h-1/2 flex flex-col justify-center items-center border ">
+      <div className="w-full h-full md:w-3/5 md:h-2/5 bg-[#B75A48] text-white flex flex-col rounded-sm">
         <div className="flex h-3/5">
           {profilePic && (
             <img
@@ -60,9 +60,9 @@ export default function PlayerDiv({ user, color, timer, turn }) {
             <div>Playing as : {color}</div>
           </div>
         </div>
-        <div className="w-full h-2/5 flex justify-center items-center">
+        <div className="mt-2 md:mt-0 md:w-full md:h-2/5 flex justify-center items-center">
           <span
-            className={`${timerBgClass} w-2/3 h-2/3 flex justify-center items-center`}
+            className={`${timerBgClass} w-2/3 h-full md:h-2/3 flex justify-center items-center`}
           >
             {formatTime(timer)}
           </span>
