@@ -35,7 +35,7 @@ passport.use(
                     });
                     await user.save();
                 }
-
+                user = await User.findOne({ email: profile.emails[0].value });  
                 // // Ensure generateAccessToken exists before calling
                 // if (typeof user.generateAccessToken !== "function") {
                 //     return done(new Error("User model missing generateAccessToken method"), false);

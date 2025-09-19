@@ -46,9 +46,11 @@ export const googlecallback = (req , res )=>{ // this is called for verifying go
             res.cookie("jwtToken", jwtToken ,{ // this is the cookie send to the browser(client's)
                 httpOnly : true, // in console it wont show
                 secure : true, //set true to test
-                // secure : process.env.NODE_ENV === "production", // the cookie is sent through the http sever and no where else
                 sameSite : "None",
+                // secure : process.env.NODE_ENV === "production", // the cookie is sent through the http sever and no where else
             });
+            
+            
             return res.redirect(`${process.env.FRONTEND}/Dashboard`);
         }
         res.redirect(`${process.env.FRONTEND}/signin`)
@@ -99,13 +101,11 @@ export const login =  async (req , res) =>{
 }
 
 export const logout = (req, res) => {
-  // Clear the JWT cookie
   res.clearCookie('jwtToken', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'None',
-    domain: process.env.NODE_ENV === 'production' ? '.chesso-ejb0.onrender.com' : undefined
   });
 
   return res.json({ message: 'Logged out successfully' });
-}
+};

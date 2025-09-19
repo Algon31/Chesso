@@ -138,6 +138,7 @@ export default function GamePage() {
 
       setTimeout(() => {
         navigate('/Dashboard');
+        toast.success("Going Back To Dasboard");
       }, 5000);
     };
 

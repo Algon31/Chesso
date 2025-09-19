@@ -2,33 +2,37 @@ import { createContext, useState, useEffect } from "react";
 import BackEndUrl from "../utilites/config";
 import Socket from "../utilites/Socket";
 
+import { useLocation } from "react-router-dom";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isConnected, setIsConnected] = useState(Socket.connected);
 
-  // Check if logged in on mount
-    useEffect(() => {
-      const controller = new AbortController();
-      const checkStatus = async () => {
-        try {
-          const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
-            credentials: "include",
-            signal: controller.signal,
-          });
-          if (!res.ok) return;
-          const data = await res.json();
-          setUser(data._id);
-        } catch (err) {
-          if (err.name !== "AbortError") {
-            console.log("Error checking login status");
-          }
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== "/Dashboard") return;
+
+    const controller = new AbortController();
+    const checkStatus = async () => {
+      try {
+        const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
+          credentials: "include",
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        setUser(data._id);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.log("Error checking login status");
         }
-      };
-      checkStatus();
-      return () => controller.abort();
-    }, [1000]);
+      }
+    };
+    checkStatus();
+
+    return () => controller.abort();
+  }, [location.pathname]);
 
   // Connect socket only if user is logged in
   useEffect(() => {

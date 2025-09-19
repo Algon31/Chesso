@@ -202,7 +202,7 @@ export default function gameSetupSocket(io) {
             const game = Games[gameID];
             if (!game) return;
 
-            const opponentID = PlayerID === game.player1 ? game.player2 : game.player1;
+            const opponentID = PlayerID === game.player1 ? game.player1 : game.player2;
 
             io.to(gameID).emit('gameOver', {
                 WinnerID: opponentID,
