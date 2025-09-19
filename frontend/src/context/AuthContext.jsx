@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from "react";
 import BackEndUrl from "../utilites/config";
-import { toast } from "sonner";
 import Socket from "../utilites/Socket";
 
 const AuthContext = createContext();

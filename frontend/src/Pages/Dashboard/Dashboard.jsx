@@ -23,6 +23,10 @@ export default function Dashboard() {
   useEffect(() => {
     console.log("user : ", user);
   }, [user]);
+  console.log("if u logged through the google and the page still shows disconnected, i really apologies for ur incoviences");
+  console.log("login throgh the email and password for without login issue");
+  console.log("im currently working on the issue !!");
+  console.log("thank you for understanding :)");
 
   return (
     <>
@@ -50,7 +54,7 @@ export default function Dashboard() {
                 skills. Make your opponents know who's playing...
               </span>
               <div className="w-full h-30 flex flex-col md:flex-row md:items-center md:pl-20 items-center">
-                <div className=" w-30 h-10 md:w-35 text-sm md:text-lg md:h-12 bg-[#B75A48] rounded-sm text-white flex justify-center items-center px-3">
+                <div className=" w-30 h-10 md:w-35 text-sm md:text-lg md:h-12 bg-[#b16d60] rounded-sm text-white flex justify-center items-center px-3">
                   <img
                     src="/assets/Svgs/timer.svg"
                     alt="timer"
@@ -59,7 +63,7 @@ export default function Dashboard() {
                   10 min
                 </div>
 
-                <div className=" w-30 h-10 md:w-40 md:h-12 text-xs md:text-lg bg-[#B75A48] mt-2 md:mt-0 md:ml-20 rounded-sm text-white flex justify-center items-center">
+                <div className=" w-30 h-10 md:w-40 md:h-12 text-xs md:text-lg bg-[#b16d60] mt-2 md:mt-0 md:ml-20 rounded-sm text-white flex justify-center items-center">
                   <img
                     src="/assets/Svgs/pawn.svg"
                     alt="timer"
@@ -99,11 +103,11 @@ function Button({ user }) {
 
       Socket.on("gameStarted", (data) => {
         const { gameID } = data;
-        toast.success("game started !");
+        toast.success("Game Started !");
         navigate(`/Gamepage/${gameID}`, { state: { gameData: data } });
       });
     } catch (error) {
-      toast.error(`error starting game : ${error}`);
+      toast.error(`Error Starting Game : ${error}`);
     }
   };
   return (

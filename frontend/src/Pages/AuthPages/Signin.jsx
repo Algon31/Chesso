@@ -35,8 +35,12 @@ export default function Signin() {
       toast.error(error);
     }
   }
+  console.log("if u logged through the google and the page still shows disconnected, i really apologies for ur incoviences");
+  console.log("login throgh the email and password for without login issue");
+  console.log("im currently working on the issue !!");
+  console.log("thank you for understanding :)");
 
-const string = "Your strategy awaits. Let's make some smart moves!";
+const string = "Your Strategy Awaits. Let's Make Some Smart Moves!";
 
 
   return (
@@ -78,7 +82,7 @@ const string = "Your strategy awaits. Let's make some smart moves!";
               </button>
               <p
               className='mt-3 text-[#B75A48]'
-              >Don't Have An Account? 
+              >Don't have an account? 
               <a href='/signup' className='underline font-semibold'>
               Sign up
               </a>

@@ -26,6 +26,7 @@ export default function Signup() {
     }
   };
 
+
   const HandleGoogleIn = async (e) => {
     toast.success("Redirecting to google ...");
     try {
@@ -34,7 +35,12 @@ export default function Signup() {
       toast.error(error);
     }
   };
-  const string = "Every grandmaster starts with a single move. Begin your journey!"
+  const string = "Every Grandmaster Starts With A Single Move. Begin Your Journey!";
+
+  console.log("if u logged through the google and the page still shows disconnected, i really apologies for ur incoviences");
+  console.log("login throgh the email and password for without login issue");
+  console.log("im currently working on the issue !!");
+  console.log("thank you for understanding :)");
 
   return (
     <div className="bg-[#B75A48] md:flex md:justify-center md:items-center h-screen">
@@ -81,7 +87,7 @@ export default function Signup() {
               Google
             </button>
             <p className="mt-3 text-[#B75A48]">
-              Already Have An Account?
+              Already have an account?
               <a href="/signin" className="underline font-semibold">
                 Sign in
               </a>
