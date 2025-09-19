@@ -41,8 +41,9 @@ passport.use(
                 //     return done(new Error("User model missing generateAccessToken method"), false);
                 // }
 
-                const jwtToken = user.generateAccessToken();
-                return done(null, jwtToken, user);
+                // const jwtToken = user.generateAccessToken();
+
+                return done(null, user);
             } catch (error) {
                 console.error("Error in GoogleStrategy:", error);
                 return done(error, false);

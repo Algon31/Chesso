@@ -40,7 +40,7 @@ export const googlecallback = (req , res )=>{ // this is called for verifying go
             return res.redirect(`${process.env.FRONTEND}/signin`); // if error redirects to signin
         }
 
-        // const jwtToken = user.generateAccessToken(); // generate tokken is called from models
+        const jwtToken = user.generateAccessToken(); // generate tokken is called from models
 
         if(jwtToken){ 
             res.cookie("jwtToken", jwtToken ,{ // this is the cookie send to the browser(client's)
