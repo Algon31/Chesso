@@ -16,6 +16,7 @@ const checkLogged = async () => {
     const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
       credentials: "include",
     });
+    console.log(res);
     if (!res.ok) return;
     const data = await res.json();
     setUser(data._id);
