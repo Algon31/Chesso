@@ -9,26 +9,26 @@ const AuthProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(Socket.connected);
 
   // Check if logged in on mount
-  useEffect(() => {
-    const controller = new AbortController();
-    const checkStatus = async () => {
-      try {
-        const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
-          credentials: "include",
-          signal: controller.signal,
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        setUser(data._id);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          console.log("Error checking login status");
+    useEffect(() => {
+      const controller = new AbortController();
+      const checkStatus = async () => {
+        try {
+          const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
+            credentials: "include",
+            signal: controller.signal,
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          setUser(data._id);
+        } catch (err) {
+          if (err.name !== "AbortError") {
+            console.log("Error checking login status");
+          }
         }
-      }
-    };
-    checkStatus();
-    return () => controller.abort();
-  }, []);
+      };
+      checkStatus();
+      return () => controller.abort();
+    }, []);
 
   // Connect socket only if user is logged in
   useEffect(() => {

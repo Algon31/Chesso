@@ -22,14 +22,15 @@ app.use(cookieParser()); //  now it can read cookies sent by client
 
 const server = http.createServer(app);
 
-// const allowedOrigins = [
-//   // process.env.LFRONTEND,
-//   process.env.FRONTEND,
-//   process.env.FrontEND_origins,
-// ];
+const allowedOrigins = [
+  // process.env.LFRONTEND,
+  process.env.FRONTEND,
+  process.env.FrontEND_origins,
+  
+];
 
 app.use(cors({
-  origin : process.env.FRONTEND,
+  origin : allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
@@ -41,7 +42,7 @@ app.get('/', (req, res) => {
 
 const io = new Server(server, {
   cors :{
-  origin : process.env.FRONTEND,
+  origin : allowedOrigins,
   methods :  ["GET", "POST", "PUT", "DELETE"],
   credentials : true,
 }}); 
