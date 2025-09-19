@@ -28,7 +28,7 @@ const AuthProvider = ({ children }) => {
       };
       checkStatus();
       return () => controller.abort();
-    }, []);
+    }, [1000]);
 
   // Connect socket only if user is logged in
   useEffect(() => {
