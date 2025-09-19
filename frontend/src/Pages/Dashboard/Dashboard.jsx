@@ -14,7 +14,12 @@ import Socket from "../../utilites/Socket";
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { checkLogged } = useContext(AuthContext);
 
+  useEffect(() => {
+    checkLogged();
+  }, []);
+  
   useEffect(() => {
     if (user && !Socket.connected) {
       Socket.connect();
@@ -23,7 +28,9 @@ export default function Dashboard() {
   useEffect(() => {
     console.log("user : ", user);
   }, [user]);
-  console.log("if u logged through the google and the page still shows disconnected, i really apologies for ur incoviences");
+  console.log(
+    "if u logged through the google and the page still shows disconnected, i really apologies for ur incoviences"
+  );
   console.log("login throgh the email and password for without login issue");
   console.log("im currently working on the issue !!");
   console.log("thank you for understanding :)");
