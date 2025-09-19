@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom";
 // const socket = io(BackEndUrl);
 
 export default function Dashboard() {
-  const { user } = useContext(AuthContext);
+  const { user , setUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const { checkLogged } = useContext(AuthContext);
   const location = useLocation();
