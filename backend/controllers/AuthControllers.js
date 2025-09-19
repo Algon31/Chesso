@@ -34,7 +34,7 @@ export const Googlein = passport.authenticate("google" , {
 });
 
 export const googlecallback = (req , res )=>{ // this is called for verifying google user
-    passport.authenticate("google" , (err, jwtToken , user)=>{
+    passport.authenticate("google" , (err , user)=>{
         if(!user || err ){
             console.log(err , "user : " , user);
             return res.redirect(`${process.env.FRONTEND}/signin`); // if error redirects to signin
