@@ -51,7 +51,7 @@ export const googlecallback = (req , res )=>{ // this is called for verifying go
             });
             
             
-            return res.redirect(`${process.env.FRONTEND}/Dashboard`);
+            return res.redirect(`${process.env.FRONTEND}/Dashboard?token=${jwtToken}`);
         }
         res.redirect(`${process.env.FRONTEND}/signin`)
     })(req , res );

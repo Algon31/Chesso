@@ -14,7 +14,7 @@ const AuthProvider = ({ children }) => {
 const checkLogged = async () => {
   try {
     const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
-      credentials: "include",
+      headers: { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` },
     });
     console.log(res);
     if (!res.ok) return;

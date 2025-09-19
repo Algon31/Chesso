@@ -9,12 +9,29 @@ import LogoutButton from "../../Components/LogoutButton";
 // import BackEndUrl from "../../utilites/config";
 import { useEffect } from "react";
 import Socket from "../../utilites/Socket";
+import { useLocation } from "react-router-dom";
 // const socket = io(BackEndUrl);
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const { checkLogged } = useContext(AuthContext);
+  const location = useLocation();
+
+  // for google loginn
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+
+    if (token) {
+      // Save to localStorage
+      localStorage.setItem("jwtToken", token);
+
+      // Decode token to get user ID
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      setUser(payload._id);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     checkLogged();
