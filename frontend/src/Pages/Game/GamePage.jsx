@@ -145,6 +145,9 @@ export default function GamePage() {
     Socket.on("makeMove", HandleMove);
     Socket.on("boardUpdate", HandleBoardUpdate);
     Socket.on("gameOver", HandleGameOver);
+    Socket.on("invalidMove", (data) =>{
+        toast.error(data.message || "Invalid Move");
+    })
 
     return () => {
       Socket.off("timerUpdate", HandleTimerUpdate);
@@ -167,9 +170,26 @@ export default function GamePage() {
     const chess = chessRef.current;
     
     const move = chess.move({ from: source, to: target, promotion: "q" });
-    if (!move) {
-      toast.error("Invalid move! Try again");
-      return false;
+    try {
+      if (move) {
+        setFen(chess.fen());
+        if (chess.inCheck()) {
+          if (!chess.isCheckmate()) toast.warning("check!!");
+        }
+        Socket.emit("makeMove", {
+          gameID,
+          from: source,
+          to: target,
+          playerID: user,
+        });
+        // console.log(gameData?.turn);
+        return true;
+      } else {
+        toast.error("Invalid Move ! try Again");
+        return false;
+      }
+    } catch {
+      toast.warning("Invalid Move");
     }
     
   };
@@ -183,7 +203,7 @@ export default function GamePage() {
           <div className="block fixed z-10 top-4 left-4 md:hidden w-60 h-25 bg-amber-900">
             <PlayerDiv
               user={oppid}
-              color={Me.color}
+              color={opp.color}
               timer={opponentTime}
               turn={currentTurn}
             />
@@ -198,9 +218,9 @@ export default function GamePage() {
         </div>
         <div className="block fixed z-10 bottom-4 right-4 md:hidden w-60 h-25 bg-amber-900">
           <PlayerDiv
-            user={oppid}
-            color={opp.color}
-            timer={opponentTime}
+            user={user}
+            color={Me.color}
+            timer={myTime}
             turn={currentTurn}
           />
         </div>

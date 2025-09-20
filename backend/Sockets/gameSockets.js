@@ -113,7 +113,7 @@ export default function gameSetupSocket(io) {
                 const move = chess.move({ from, to });
 
                 if (!move) {
-                    socket.emit('error', { message: "invalid move" });
+                    socket.emit('invalidMove', { message: "Invalid Move" });
                     return
                 }
 
