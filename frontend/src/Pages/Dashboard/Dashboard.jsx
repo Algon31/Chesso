@@ -110,7 +110,8 @@ function Button({ user }) {
   const HandleStart = () => {
     try {
       if (user == null || user == undefined) {
-        toast.error("user not found");
+        toast.error("User Not Found");
+        toast.error("Please signin");
         navigate("/signin");
         return;
       }
@@ -142,7 +143,7 @@ function Button({ user }) {
         <img
           src="/assets/Svgs/game-start.svg"
           alt="start"
-          className="w-6 md:w-10 md:h-10 mr-3"
+          className="w-6 md:w-10 md:h-10 mr-3 text-[#E8ECD6]"
         />
         Start Game
       </div>

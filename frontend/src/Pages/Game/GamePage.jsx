@@ -23,7 +23,6 @@ export default function GamePage() {
   const [fen, setFen] = useState(gameData?.board);
   const [currentTurn, setCurrentTurn] = useState("white");
   const [myTime, setMyTime] = useState(300000);
-  const [opponent, setopponent] = useState("unknown");
   const [opponentTime, setOpponentTime] = useState(300000);
   const chessRef = useRef(new Chess());
 
@@ -60,11 +59,11 @@ export default function GamePage() {
       gameData.color = data.color;
 
       if (user === gameData.player1) {
-        setMyTime(data.timer.player2);
-        setOpponentTime(data.timer.player1);
-      } else {
         setMyTime(data.timer.player1);
         setOpponentTime(data.timer.player2);
+      } else {
+        setMyTime(data.timer.player2);
+        setOpponentTime(data.timer.player1);
       }
     });
   }, [user]);
@@ -81,11 +80,11 @@ export default function GamePage() {
   useEffect(() => {
     const HandleTimerUpdate = (Ttimer) => {
       if (user === gameData.player1) {
-        setMyTime(Ttimer.timer.player2);
-        setOpponentTime(Ttimer.timer.player1);
-      } else {
         setMyTime(Ttimer.timer.player1);
         setOpponentTime(Ttimer.timer.player2);
+      } else {
+        setMyTime(Ttimer.timer.player2);
+        setOpponentTime(Ttimer.timer.player1);
       }
     };
 
@@ -98,11 +97,11 @@ export default function GamePage() {
       setFen(data.board);
       setCurrentTurn(data.turn);
       if (user == data.player1) {
-        setMyTime(data.timer.player2);
-        setOpponentTime(data.timer.player1);
-      } else {
         setMyTime(data.timer.player1);
         setOpponentTime(data.timer.player2);
+      } else {
+        setMyTime(data.timer.player2);
+        setOpponentTime(data.timer.player1);
       }
     };
 
@@ -118,7 +117,7 @@ export default function GamePage() {
           toast.success("You Won By CheckMate");
           // navigate("/Dashboard");
         } else if (result.res === "Resignation") {
-          toast.success("You Lose By Resignation");
+          toast.success("You You By Resignation");
         } else {
           toast.error("error in showing result");
         }
@@ -127,18 +126,18 @@ export default function GamePage() {
           toast.success("You Lose By TimeOut");
           // navigate("/Dashboard");
         } else if (result.res === "CheckMate") {
-          toast.success("You Lose By CheckMate");
+          toast.success("You You By CheckMate");
           // navigate("/Dashboard");
         } else if (result.res === "Resignation") {
           toast.success("You Won By Resignation");
         } else {
-          toast.error("error showing result");
+          toast.error("Error showing result");
         }
       }
+      toast.success("Redirecting Back To Dashboard...");
 
       setTimeout(() => {
-        navigate('/Dashboard');
-        toast.success("Going Back To Dasboard");
+        navigate("/Dashboard");
       }, 5000);
     };
 
@@ -162,32 +161,17 @@ export default function GamePage() {
   const ChessMoved = (source, target) => {
     console.log(`from : ${source} to : ${target}`);
     if (!isMyturn) {
-      toast.success("not your turn !!");
+      toast.success("Not your turn !!");
       return false;
     }
     const chess = chessRef.current;
+    
     const move = chess.move({ from: source, to: target, promotion: "q" });
-    try {
-      if (move) {
-        setFen(chess.fen());
-        if (chess.inCheck()) {
-          if (!chess.isCheckmate()) toast.warning("check!!");
-        }
-        Socket.emit("makeMove", {
-          gameID,
-          from: source,
-          to: target,
-          playerID: user,
-        });
-        // console.log(gameData?.turn);
-        return true;
-      } else {
-        toast.error("invalid move ! try Again");
-        return false;
-      }
-    } catch {
-      toast.warning("invalid Move");
+    if (!move) {
+      toast.error("Invalid move! Try again");
+      return false;
     }
+    
   };
   const oppid =
     user === gameData?.player1 ? gameData?.player2 : gameData?.player1;
@@ -214,23 +198,23 @@ export default function GamePage() {
         </div>
         <div className="block fixed z-10 bottom-4 right-4 md:hidden w-60 h-25 bg-amber-900">
           <PlayerDiv
-            user={user}
+            user={oppid}
             color={opp.color}
-            timer={myTime}
+            timer={opponentTime}
             turn={currentTurn}
           />
         </div>
         <div className="hidden md:block md:w-2/5 bg-[#E8ECD6] h-screen">
           <PlayerDiv
-            user={user}
+            user={oppid}
             color={opp.color}
-            timer={myTime}
+            timer={opponentTime}
             turn={currentTurn}
           />
           <PlayerDiv
-            user={oppid}
+            user={user}
             color={Me.color}
-            timer={opponentTime}
+            timer={myTime}
             turn={currentTurn}
           />
         </div>

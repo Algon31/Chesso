@@ -124,9 +124,9 @@ export default function gameSetupSocket(io) {
                 if (Gameover(updateboard)) {
                     const result = getGameResult(updateboard, game.player1, game.player2);
 
-                    game.status = 'finished';
+                    game.status = 'Finished';
                     game.Winner = result.WinnerID;
-                    await Game.updateOne({ _id: gameID }, { boardState: updateboard, status: 'finished', currentP: nextTurn });
+                    await Game.updateOne({ _id: gameID }, { boardState: updateboard, status: 'Finished', currentP: nextTurn });
 
                     io.to(gameID).emit('gameOver', result);
                     stopTimer(gameID, 'player1');
@@ -198,17 +198,25 @@ export default function gameSetupSocket(io) {
             });
 
         })
-        socket.on('Resign', ({ gameID, PlayerID }) => {
+        socket.on('Resign', async ({ gameID, PlayerID }) => {
             const game = Games[gameID];
             if (!game) return;
 
-            const opponentID = PlayerID === game.player1 ? game.player1 : game.player2;
+            const opponentID = PlayerID === game.player1 ? game.player2 : game.player1;
+
+            await Game.updateOne({_id : gameID},{
+                status : "Finished",
+                WinnerID : opponentID,
+                res : "Resignation",
+            })
 
             io.to(gameID).emit('gameOver', {
                 WinnerID: opponentID,
                 res: "Resignation",
                 draw: false,
             });
+
+
             delete Games[gameID];
         });
 
@@ -237,7 +245,7 @@ function startTimer(gameID, player, io) {
             await Game.updateOne(
                 { _id: gameID },
                 {
-                    status: 'finished',
+                    status: 'Finished',
                     WinnerID: WinnerID,
                     timer: game.timer,
                 }

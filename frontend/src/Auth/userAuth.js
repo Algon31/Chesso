@@ -47,7 +47,7 @@ export const userAuth = () =>{
     // for handling existing person
     const handleSignin = async (userdata) =>{
         try{
-            toast.success("logging you in.. ");
+            toast.success("Logging You In... ");
             const response =  await fetch(`${BackEndUrl}/auth/signin` , {
                 method : "POST",
                 headers : {"Content-Type" : "application/json"},
@@ -64,7 +64,7 @@ export const userAuth = () =>{
                 navigate("/Dashboard");
             }
             else{
-                toast.error("could not fetch");
+                toast.error("Could Not Fetch User !!");
             }
         }
         catch(error){

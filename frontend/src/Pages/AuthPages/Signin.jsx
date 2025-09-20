@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {userAuth} from "../../Auth/userAuth";
 import { toast } from 'sonner';
 import BackEndUrl from '../../utilites/config';
-import SocketStatus from '../../Components/SocketChecker';
 import SampleVideo from '../../Components/SampleVideo';
 
 
@@ -35,10 +34,6 @@ export default function Signin() {
       toast.error(error);
     }
   }
-  console.log("if u logged through the google and the page still shows disconnected, i really apologies for ur incoviences");
-  console.log("login throgh the email and password for without login issue");
-  console.log("im currently working on the issue !!");
-  console.log("thank you for understanding :)");
 
 const string = "Your Strategy Awaits. Let's Make Some Smart Moves!";
 
