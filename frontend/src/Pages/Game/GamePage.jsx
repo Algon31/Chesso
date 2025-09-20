@@ -119,17 +119,17 @@ export default function GamePage() {
         } else if (result.res === "Resignation") {
           toast.success("You You By Resignation");
         } else {
-          toast.error("error in showing result");
+          toast.error("Error in showing result");
         }
       } else {
         if (result.res === "Time-Out") {
           toast.success("You Lose By TimeOut");
           // navigate("/Dashboard");
         } else if (result.res === "CheckMate") {
-          toast.success("You You By CheckMate");
+          toast.success("You Lose By CheckMate");
           // navigate("/Dashboard");
         } else if (result.res === "Resignation") {
-          toast.success("You Won By Resignation");
+          toast.success("You Lose By Resignation");
         } else {
           toast.error("Error showing result");
         }

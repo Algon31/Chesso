@@ -56,7 +56,7 @@ export default function PlayerDiv({ user, color, timer, turn }) {
             />
           )}
           <div className="ml-2 flex flex-col">
-            <div className="mt-3">player : {name}</div>
+            <div>player : {name || isMyTurn ? "You" : ""}</div>
             <div>Playing as : {color}</div>
           </div>
         </div>

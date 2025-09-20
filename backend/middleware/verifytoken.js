@@ -5,7 +5,7 @@ dotenv.config();
 const verfiytoken = (req , res, next)=>{
     
     const token = req.cookies.jwtToken;
-    console.log("Cookies received:", req.cookies);
+    // console.log("Cookies received:", req.cookies);
 
     if(!token){
         console.log("Token not found!");
@@ -14,7 +14,7 @@ const verfiytoken = (req , res, next)=>{
     
     try{
         const verified = jwt.verify(token , process.env.JWT_Secret_baby);
-        console.log("JWT verified:", verified);
+        // console.log("JWT verified:", verified);
         req.user = verified;
         next();
     }
