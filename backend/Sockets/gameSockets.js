@@ -146,7 +146,7 @@ export default function gameSetupSocket(io) {
                         player1: game.player1,
                         player2: game.player2,
                     });
-                    await Game.updateOne({ _id: gameID }, {
+                    await Game.updateOne({ _id: gameID }, { // saving current fen state in backend 
                         boardState: updateboard,
                         currentP: nextTurn,
                     })

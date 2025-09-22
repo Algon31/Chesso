@@ -13,9 +13,6 @@ router.get('/checklogged', verfiytoken ,(req , res)=>{
         return res.json(req.user);
 });
 
-// router.get("/checklogged", authMiddleware, (req, res) => {
-//   res.json({ _id: req.user._id, name: req.user.name, email: req.user.email });
-// });
 
 router.post('/signin' , login );
 

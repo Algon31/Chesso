@@ -47,7 +47,6 @@ export const googlecallback = (req , res )=>{ // this is called for verifying go
                 httpOnly : true, // in console it wont show
                 secure : true, //set true to test
                 sameSite : "None",
-                // secure : process.env.NODE_ENV === "production", // the cookie is sent through the http sever and no where else
             });
             
             
@@ -58,7 +57,7 @@ export const googlecallback = (req , res )=>{ // this is called for verifying go
 }   
 
 export const login =  async (req , res) =>{
-    // console.log("hello");
+    
     const {email , password} = req.body;
 
     try{
