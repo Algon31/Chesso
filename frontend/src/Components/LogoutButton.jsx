@@ -5,12 +5,12 @@ import { AuthContext } from "../context/AuthContext";
 import BackEndUrl from "../utilites/config";
 
 export default function LogoutButton() {
-  const { setUser } = useContext(AuthContext);
+  const { user , setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     toast.success("Logging out...");
-    if(!user)
+    if(!user || user == null)
     navigate("/signin");
     try {
       const res = await fetch(`${BackEndUrl}/auth/logout`, {
