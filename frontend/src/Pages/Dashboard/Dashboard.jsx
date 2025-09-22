@@ -33,7 +33,7 @@ export default function Dashboard() {
     }
   }, [location.search]);
   
-  console.log(Document.cookie);
+  console.log("cookie ",Document.cookie);
   useEffect(() => {
     checkLogged();
   }, []);
