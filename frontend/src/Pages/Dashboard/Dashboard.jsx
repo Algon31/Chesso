@@ -22,6 +22,7 @@ export default function Dashboard() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
+    console.log("token : ", token);
 
     if (token) {
       // Save to localStorage
@@ -33,7 +34,7 @@ export default function Dashboard() {
     }
   }, [location.search]);
   
-  console.log("cookie ",Document.cookie);
+  console.log("cookie ",document.cookie);
   useEffect(() => {
     checkLogged();
   }, []);

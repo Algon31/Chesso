@@ -10,6 +10,8 @@ export default function LogoutButton() {
 
   const handleLogout = async () => {
     toast.success("Logging out...");
+    if(!user)
+    navigate("/signin");
     try {
       const res = await fetch(`${BackEndUrl}/auth/logout`, {
         method: "POST",
