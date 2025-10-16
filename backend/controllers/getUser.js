@@ -16,4 +16,4 @@ export const getUser = async (req , res)=>{
         console.log(error);
         res.status(500).json({ error: 'Error fetching user' });
     }
-}
+}  

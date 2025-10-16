@@ -24,7 +24,7 @@ export default function Dashboard() {
     const token = params.get("token");
     // console.log("token : ", token);
 
-    if (token) {
+    if (token) {    
       // Save to localStorage
       localStorage.setItem("jwtToken", token);
 
