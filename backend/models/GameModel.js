@@ -28,6 +28,11 @@ const gameSchema = new mongoose.Schema({
         ref : 'User',
         default: null,
     },
+    Result : {
+        type : String,
+        enum : ['result not set yet', 'Time-Out' , 'Resignation' , 'CheckMate' , 'Draw'],
+        defualt : 'result not set yet'
+    },
 
     timer : {
         player1 : {type : Number , required : true},

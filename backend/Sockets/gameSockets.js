@@ -126,7 +126,15 @@ export default function gameSetupSocket(io) {
 
                     game.status = 'Finished';
                     game.Winner = result.WinnerID;
-                    await Game.updateOne({ _id: gameID }, { boardState: updateboard, status: 'Finished', currentP: nextTurn });
+                    
+                    await Game.updateOne(
+                        { _id: gameID }, { 
+                        boardState: updateboard, 
+                        status: 'Finished', 
+                        currentP: nextTurn ,
+                        Result : result.res
+                        // won by
+                    });
 
                     io.to(gameID).emit('gameOver', result);
                     stopTimer(gameID, 'player1');
@@ -207,7 +215,8 @@ export default function gameSetupSocket(io) {
             await Game.updateOne({_id : gameID},{
                 status : "Finished",
                 WinnerID : opponentID,
-                res : "Resignation",
+                Result : "Resignation",
+                // won by 
             })
 
             io.to(gameID).emit('gameOver', {
@@ -248,6 +257,8 @@ function startTimer(gameID, player, io) {
                     status: 'Finished',
                     WinnerID: WinnerID,
                     timer: game.timer,
+                    Result : 'Time-Out'
+                    // here won by
                 }
             );
 
@@ -299,7 +310,7 @@ function getGameResult(boardState, player1, player2) {
     }
 
     if (chess.isDraw() || chess.isStalemate() || chess.isInsufficientMaterial()) {
-        return { WinnerID: null, draw: true };
+        return { WinnerID: null, draw: true , res: 'Draw' };
     }
     return null;
 }
