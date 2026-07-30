@@ -19,29 +19,29 @@ A full-stack real-time multiplayer chess application where players can compete o
 
 ## 🛠️ Tech Stack
 
-### Frontend
+### 🎨 Frontend
 
-* React.js
-* Vite
-* CSS
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
-### Backend
+### ⚙️ Backend
 
-* Node.js
-* Express.js
-* Socket.IO
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=socketdotio&logoColor=white)
 
-### Database
+### 🗄️ Database
 
-* MongoDB
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 
-### Authentication
+### 🔐 Authentication
 
-* Google OAuth
+![Google OAuth](https://img.shields.io/badge/Google_OAuth-4285F4?style=for-the-badge&logo=google&logoColor=white)
 
-### Libraries
+### 📚 Libraries
 
-* Chess.js
+![Chess.js](https://img.shields.io/badge/Chess.js-2C3E50?style=for-the-badge)
 
 ---
 
