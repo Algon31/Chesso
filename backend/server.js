@@ -6,7 +6,7 @@ import http from 'http'
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 const app = express();
-const port = 3000
+const port = process.env.PORT || 3000;
 import dotenv from "dotenv";
 import { Server } from 'socket.io';
 import gameSetupSocket from './Sockets/gameSockets.js';
@@ -22,12 +22,13 @@ app.use(cookieParser()); //  now it can read cookies sent by client
 
 const server = http.createServer(app);
 
-const allowedOrigins = [
-  // process.env.LFRONTEND,
+const rawOrigins = [
+  process.env.FRONTEND_URL,
   process.env.FRONTEND,
-  process.env.FrontEND_origins,
-  
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : []),
+  "http://localhost:5173",
 ];
+const allowedOrigins = Array.from(new Set(rawOrigins.filter(Boolean)));
 
 app.use(cors({
   origin : allowedOrigins,
@@ -58,7 +59,7 @@ if(process.env.MONGO_URI){
       console.error("MongoDB connection error:", err);
     });
 }else{
-  console.log("Defined : MONGO_URI");
+  console.log("MONGO_URI is not defined in environment variables");
 }
 
 app.use('/auth', AuthRoutes); // tells routes for auth where to go

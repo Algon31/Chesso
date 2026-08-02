@@ -13,7 +13,8 @@ const verfiytoken = (req , res, next)=>{
     }
     
     try{
-        const verified = jwt.verify(token , process.env.JWT_Secret_baby);
+        const secret = process.env.JWT_SECRET || process.env.JWT_Secret_baby;
+        const verified = jwt.verify(token , secret);
         // console.log("JWT verified:", verified);
         req.user = verified;
         next();

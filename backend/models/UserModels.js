@@ -41,14 +41,16 @@ userSchema.methods.comparepassword = async function (inputp){
 }
 
 userSchema.methods.generateAccessToken = function (){  // mainly three parts 
+    const secret = process.env.JWT_SECRET || process.env.JWT_Secret_baby;
+    const expiry = process.env.JWT_EXPIRY || process.env.JWT_Expiry || '1d';
     return jwt.sign( // header is usally defined by the jsonwebtoken library.
         {
             _id : this._id,
             name : this.Name,
             email : this.email // your details as payload (your info)
         },
-        process.env.JWT_Secret_baby , // this is your signature 
-        {expiresIn : process.env.JWT_Expiry.toString()} // expiry time of jet token
+        secret, // this is your signature 
+        {expiresIn : expiry.toString()} // expiry time of jet token
     ); // at last while returning the token is encoded and seperated by dots
 };
 

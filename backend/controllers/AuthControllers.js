@@ -34,10 +34,11 @@ export const Googlein = passport.authenticate("google" , {
 });
 
 export const googlecallback = (req , res )=>{ // this is called for verifying google user
+    const frontendUrl = process.env.FRONTEND_URL || process.env.FRONTEND || 'http://localhost:5173';
     passport.authenticate("google" , (err , user)=>{
         if(!user || err ){
             console.log(err , "user : " , user);
-            return res.redirect(`${process.env.FRONTEND}/signin`); // if error redirects to signin
+            return res.redirect(`${frontendUrl}/signin`); // if error redirects to signin
         }
 
         const jwtToken = user.generateAccessToken(); // generate tokken is called from models
@@ -50,9 +51,9 @@ export const googlecallback = (req , res )=>{ // this is called for verifying go
             });
             
             
-            return res.redirect(`${process.env.FRONTEND}/Dashboard?token=${jwtToken}`);
+            return res.redirect(`${frontendUrl}/Dashboard?token=${jwtToken}`);
         }
-        res.redirect(`${process.env.FRONTEND}/signin`)
+        res.redirect(`${frontendUrl}/signin`)
     })(req , res );
 }   
 
