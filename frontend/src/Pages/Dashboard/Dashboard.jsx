@@ -81,7 +81,7 @@ export default function Dashboard() {
                     alt="timer"
                     className="w-5 h-5 mr-3"
                   />
-                  10 min
+                  5 min
                 </div>
 
                 <div className=" w-30 h-10 md:w-40 md:h-12 text-xs md:text-lg bg-[#b16d60] mt-2 md:mt-0 md:ml-20 rounded-sm text-white flex justify-center items-center">
@@ -105,6 +105,27 @@ export default function Dashboard() {
 function Button({ user }) {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const handleWaiting = (message) => {
+      console.log("waiting message : ", message);
+      toast.success("Waiting For Opponents");
+    };
+
+    const handleGameStarted = (data) => {
+      const { gameID } = data;
+      toast.success("Game Started !");
+      navigate(`/Gamepage/${gameID}`, { state: { gameData: data } });
+    };
+
+    Socket.on("waitingForOpponent", handleWaiting);
+    Socket.on("gameStarted", handleGameStarted);
+
+    return () => {
+      Socket.off("waitingForOpponent", handleWaiting);
+      Socket.off("gameStarted", handleGameStarted);
+    };
+  }, [navigate]);
+
   const HandleStart = () => {
     try {
       if (user == null || user == undefined) {
@@ -117,17 +138,6 @@ function Button({ user }) {
 
       Socket.emit("StartGame", PlayerID);
       console.log("PlayerID :", PlayerID);
-
-      Socket.on("waitingForOpponent", (message) => {
-        console.log("waitng message : ", message);
-        toast.success("Wating For Opponents");
-      });
-
-      Socket.on("gameStarted", (data) => {
-        const { gameID } = data;
-        toast.success("Game Started !");
-        navigate(`/Gamepage/${gameID}`, { state: { gameData: data } });
-      });
     } catch (error) {
       toast.error(`Error Starting Game : ${error}`);
     }

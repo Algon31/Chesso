@@ -28,20 +28,20 @@ export const userAuth = () =>{
 
             if(response.ok){
                 toast.success("Account Created Successfully");
-                navigate("/Signin");
+                navigate("/signin");
             }
             else{
-                if(response == "user already exists"){
-                    toast.success("User Already Exist");
-                    navigate("/Signin");
+                if(data.message === "user already exists" || response.status === 409){
+                    toast.info("User Already Exists");
+                    navigate("/signin");
                 }
                 else{
-                    toast.error(data.message , "error");
+                    toast.error(data.message || "Registration failed");
                 }
             }
         }
         catch(error){
-            toString.error(error.message);
+            toast.error(error.message);
         }
     }
     // for handling existing person

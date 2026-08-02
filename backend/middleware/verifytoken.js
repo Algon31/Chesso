@@ -4,7 +4,8 @@ dotenv.config();
 
 const verfiytoken = (req , res, next)=>{
     
-    const token = req.cookies.jwtToken;
+    const authHeader = req.headers.authorization;
+    const token = req.cookies?.jwtToken || (authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null);
     // console.log("Cookies received:", req.cookies);
 
     if(!token){

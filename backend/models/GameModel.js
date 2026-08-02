@@ -31,7 +31,7 @@ const gameSchema = new mongoose.Schema({
     Result : {
         type : String,
         enum : ['result not set yet', 'Time-Out' , 'Resignation' , 'CheckMate' , 'Draw'],
-        defualt : 'result not set yet'
+        default : 'result not set yet'
     },
 
     timer : {

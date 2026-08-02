@@ -88,7 +88,7 @@ export default function gameSetupSocket(io) {
             }
         });
         // console.log(Games);
-        socket.on('makeMove', async ({ gameID, from, to, playerID }) => {
+        socket.on('makeMove', async ({ gameID, from, to, playerID, promotion }) => {
             console.log(`made a move, from ${from} , to : ${to} by player : ${playerID} `);
             let game = Games[gameID];
 
@@ -100,7 +100,6 @@ export default function gameSetupSocket(io) {
             }
 
             const chess = game.chess;
-            // console.log("updated  chess ", chess);
 
             if (game.currentP != playerID) {
                 socket.emit('error', {
@@ -110,7 +109,7 @@ export default function gameSetupSocket(io) {
             }
 
             try {
-                const move = chess.move({ from, to });
+                const move = chess.move({ from, to, promotion: promotion || 'q' });
 
                 if (!move) {
                     socket.emit('invalidMove', { message: "Invalid Move" });
@@ -124,16 +123,15 @@ export default function gameSetupSocket(io) {
                 if (Gameover(updateboard)) {
                     const result = getGameResult(updateboard, game.player1, game.player2);
 
-                    game.status = 'Finished';
+                    game.status = 'finished';
                     game.Winner = result.WinnerID;
                     
                     await Game.updateOne(
                         { _id: gameID }, { 
                         boardState: updateboard, 
-                        status: 'Finished', 
+                        status: 'finished', 
                         currentP: nextTurn ,
                         Result : result.res
-                        // won by
                     });
 
                     io.to(gameID).emit('gameOver', result);
@@ -206,18 +204,21 @@ export default function gameSetupSocket(io) {
             });
 
         })
-        socket.on('Resign', async ({ gameID, PlayerID }) => {
+        socket.on('Resign', async ({ gameID, playerID, PlayerID }) => {
             const game = Games[gameID];
             if (!game) return;
 
-            const opponentID = PlayerID === game.player1 ? game.player2 : game.player1;
+            const resigner = playerID || PlayerID;
+            const opponentID = resigner === game.player1 ? game.player2 : game.player1;
+
+            stopTimer(gameID, 'player1');
+            stopTimer(gameID, 'player2');
 
             await Game.updateOne({_id : gameID},{
-                status : "Finished",
+                status : "finished",
                 WinnerID : opponentID,
                 Result : "Resignation",
-                // won by 
-            })
+            });
 
             io.to(gameID).emit('gameOver', {
                 WinnerID: opponentID,
@@ -225,13 +226,13 @@ export default function gameSetupSocket(io) {
                 draw: false,
             });
 
-
             delete Games[gameID];
         });
 
         socket.on('disconnect', () => {
-            console.log('diconnectd client')
-        })
+            waitingQ = waitingQ.filter(entry => entry.socket.id !== socket.id);
+            console.log('disconnected client:', socket.id);
+        });
 
     });
 }
@@ -254,7 +255,7 @@ function startTimer(gameID, player, io) {
             await Game.updateOne(
                 { _id: gameID },
                 {
-                    status: 'Finished',
+                    status: 'finished',
                     WinnerID: WinnerID,
                     timer: game.timer,
                     Result : 'Time-Out'
