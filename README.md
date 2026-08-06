@@ -69,7 +69,7 @@ Chesso/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/Algon31/<repository-name>.git
+git clone https://github.com/Algon31/Chesso.git
 ```
 
 ### Install dependencies
