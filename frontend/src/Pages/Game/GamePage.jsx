@@ -10,19 +10,29 @@ import PlayerDiv from "../../Components/PlayerDiv";
 import sounds from "../../utilites/soundEffects";
 
 export default function GamePage() {
-  const { gameID } = useParams();
+  const { gameID = "preview" } = useParams();
   const { user, setUser } = useContext(AuthContext);
   const userSaved = localStorage.getItem("userId");
   const navigate = useNavigate();
   const location = useLocation();
 
+  const isDemoMode =
+    gameID === "preview" ||
+    gameID === "demo" ||
+    gameID === "practice" ||
+    gameID === "test" ||
+    location.pathname === "/preview" ||
+    location.pathname === "/practice";
+
   const gameData = location.state?.gameData;
 
-  const [fen, setFen] = useState(gameData?.board || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+  const [fen, setFen] = useState(
+    gameData?.board || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+  );
   const [currentTurn, setCurrentTurn] = useState("white");
   const [myColor, setMyColor] = useState(gameData?.color || "white");
-  const [player1, setPlayer1] = useState(gameData?.player1 || null);
-  const [player2, setPlayer2] = useState(gameData?.player2 || null);
+  const [player1, setPlayer1] = useState(gameData?.player1 || (isDemoMode ? "demo_user" : null));
+  const [player2, setPlayer2] = useState(gameData?.player2 || (isDemoMode ? "demo_bot" : null));
   const [myTime, setMyTime] = useState(300000);
   const [opponentTime, setOpponentTime] = useState(300000);
   const [moveFrom, setMoveFrom] = useState(null);
@@ -31,9 +41,17 @@ export default function GamePage() {
   const [inCheckSquare, setInCheckSquare] = useState(null);
 
   const chessRef = useRef(new Chess());
-  const currentUser = user || userSaved;
+  const currentUser = user || userSaved || (isDemoMode ? "demo_user" : null);
 
+  // Initialize socket or preview mode
   useEffect(() => {
+    if (isDemoMode) {
+      toast.info("🎯 Preview / Practice Mode: You can move pieces freely to test UI/UX & sounds!", {
+        duration: 4000,
+      });
+      return;
+    }
+
     if (userSaved) {
       setUser(userSaved);
     } else {
@@ -63,13 +81,13 @@ export default function GamePage() {
     return () => {
       Socket.off("recoverGameState");
     };
-  }, [user, gameID, navigate, setUser, userSaved]);
+  }, [user, gameID, isDemoMode, navigate, setUser, userSaved]);
 
+  // Sync chess state with FEN & locate King in check
   useEffect(() => {
     try {
       chessRef.current.load(fen);
 
-      // Locate king square if in check
       if (chessRef.current.inCheck()) {
         const turn = chessRef.current.turn();
         const board = chessRef.current.board();
@@ -92,7 +110,10 @@ export default function GamePage() {
     }
   }, [fen]);
 
+  // Socket event listeners for multiplayer
   useEffect(() => {
+    if (isDemoMode) return;
+
     const HandleTimerUpdate = (Ttimer) => {
       if (currentUser === player1) {
         setMyTime(Ttimer.timer.player1);
@@ -152,19 +173,20 @@ export default function GamePage() {
       Socket.off("gameOver", HandleGameOver);
       Socket.off("invalidMove");
     };
-  }, [currentUser, player1, navigate]);
+  }, [currentUser, player1, navigate, isDemoMode]);
 
-  const isMyturn = chessRef.current.turn() === (myColor ? myColor[0] : "w");
+  const isMyturn = isDemoMode || chessRef.current.turn() === (myColor ? myColor[0] : "w");
 
-  // Prevent dragging opponent pieces or moving out of turn
+  // Prevent dragging opponent pieces in live match
   const isDraggablePiece = ({ piece }) => {
+    if (isDemoMode) return true; // In preview/demo, allow moving any piece
     if (!isMyturn) return false;
-    const pieceColor = piece[0]; // 'w' or 'b'
+    const pieceColor = piece[0];
     const expectedColor = myColor === "white" ? "w" : "b";
     return pieceColor === expectedColor;
   };
 
-  // Get legal move highlights when square is clicked or dragged
+  // Get legal moves when clicking/dragging
   const getMoveOptions = (square) => {
     const moves = chessRef.current.moves({
       square,
@@ -181,9 +203,6 @@ export default function GamePage() {
   };
 
   const onSquareClick = (square) => {
-    if (!isMyturn) return;
-
-    // If already selected a piece, attempt to move
     if (moveFrom) {
       const moves = chessRef.current.moves({
         square: moveFrom,
@@ -192,7 +211,6 @@ export default function GamePage() {
       const foundMove = moves.find((m) => m.from === moveFrom && m.to === square);
 
       if (!foundMove) {
-        // Clicked another friendly piece
         const hasOptions = getMoveOptions(square);
         if (hasOptions) {
           setMoveFrom(square);
@@ -203,7 +221,6 @@ export default function GamePage() {
         return;
       }
 
-      // Execute move
       ChessMoved(moveFrom, square);
       setMoveFrom(null);
       setPossibleMoves([]);
@@ -216,17 +233,10 @@ export default function GamePage() {
     }
   };
 
-  // Execute piece drop and validate legality
+  // Move validation and execution
   const ChessMoved = (source, target) => {
-    if (!isMyturn) {
-      sounds.playIllegalMove();
-      toast.warning("Wait for your opponent's turn!");
-      return false;
-    }
-
     const chess = chessRef.current;
     try {
-      // Check if this is a pawn promotion move
       const piece = chess.get(source);
       const isPromotion =
         piece &&
@@ -245,6 +255,7 @@ export default function GamePage() {
         setLastMove({ from: source, to: target });
         setMoveFrom(null);
         setPossibleMoves([]);
+        setCurrentTurn(chess.turn() === "w" ? "white" : "black");
 
         if (move.captured) {
           sounds.playCapture();
@@ -252,18 +263,26 @@ export default function GamePage() {
           sounds.playMove();
         }
 
-        if (chess.inCheck()) {
+        if (chess.isCheckmate()) {
+          sounds.playGameOver();
+          toast.success("Checkmate!");
+        } else if (chess.inCheck()) {
           sounds.playCheck();
-          if (!chess.isCheckmate()) toast.warning("Check!");
+          toast.warning("Check!");
+        } else if (chess.isDraw()) {
+          sounds.playGameOver();
+          toast.info("Draw game!");
         }
 
-        Socket.emit("makeMove", {
-          gameID,
-          from: source,
-          to: target,
-          playerID: currentUser,
-          promotion: isPromotion ? "q" : undefined,
-        });
+        if (!isDemoMode) {
+          Socket.emit("makeMove", {
+            gameID,
+            from: source,
+            to: target,
+            playerID: currentUser,
+            promotion: isPromotion ? "q" : undefined,
+          });
+        }
         return true;
       } else {
         sounds.playIllegalMove();
@@ -277,30 +296,36 @@ export default function GamePage() {
     }
   };
 
-  // Custom square styles for highlights, check indicators, and legal move dots
+  // Reset board in demo mode
+  const resetDemoBoard = () => {
+    chessRef.current.reset();
+    setFen(chessRef.current.fen());
+    setLastMove(null);
+    setMoveFrom(null);
+    setPossibleMoves([]);
+    setCurrentTurn("white");
+    toast.info("Board reset to initial position.");
+  };
+
   const customSquareStyles = useMemo(() => {
     const styles = {};
 
-    // Legal moves dots
     possibleMoves.forEach((sq) => {
       styles[sq] = {
-        background: "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
+        background: "radial-gradient(circle, rgba(0,0,0,.25) 25%, transparent 25%)",
         borderRadius: "50%",
       };
     });
 
-    // Last move highlight
     if (lastMove) {
       styles[lastMove.from] = { backgroundColor: "rgba(255, 255, 0, 0.4)" };
       styles[lastMove.to] = { backgroundColor: "rgba(255, 255, 0, 0.4)" };
     }
 
-    // Selected piece highlight
     if (moveFrom) {
       styles[moveFrom] = { backgroundColor: "rgba(100, 200, 255, 0.5)" };
     }
 
-    // King in check red highlight
     if (inCheckSquare) {
       styles[inCheckSquare] = {
         backgroundColor: "rgba(255, 0, 0, 0.6)",
@@ -321,7 +346,12 @@ export default function GamePage() {
         <div className="w-full md:w-3/5 bg-[#2B2625] h-screen flex flex-col justify-center items-center relative p-4">
           {/* Turn Banner */}
           <div className="mb-3 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider backdrop-blur-md transition-all shadow-md">
-            {isMyturn ? (
+            {isDemoMode ? (
+              <span className="text-emerald-400 flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Practice Mode ({currentTurn}'s move)
+              </span>
+            ) : isMyturn ? (
               <span className="text-emerald-400 flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
                 Your Turn ({myColor})
@@ -335,17 +365,18 @@ export default function GamePage() {
           </div>
 
           {/* Opponent div on Mobile */}
-          <div className="block md:hidden w-full max-w-xs mb-2">
+          <div className="block md:hidden w-full max-w-[420px] mb-2">
             <PlayerDiv
               user={oppid}
               color={oppColor}
               timer={opponentTime}
               turn={currentTurn}
+              isMe={false}
             />
           </div>
 
           {/* Chessboard container */}
-          <div className="w-full max-w-[420px] md:max-w-[560px] aspect-square shadow-2xl rounded-lg overflow-hidden border-4 border-[#3D3534]">
+          <div className="w-full max-w-[420px] md:max-w-[560px] aspect-square shadow-2xl rounded-xl overflow-hidden border-4 border-[#3D3534]">
             <Chessboard
               position={fen}
               boardOrientation={myColor === "white" ? "white" : "black"}
@@ -359,33 +390,93 @@ export default function GamePage() {
           </div>
 
           {/* Current player div on Mobile */}
-          <div className="block md:hidden w-full max-w-xs mt-2">
+          <div className="block md:hidden w-full max-w-[420px] mt-2">
             <PlayerDiv
               user={currentUser}
               color={myColor}
               timer={myTime}
               turn={currentTurn}
+              isMe={true}
             />
           </div>
         </div>
 
         {/* Sidebar / Desktop Player Info */}
-        <div className="hidden md:flex md:w-2/5 bg-[#1F1B1A] h-screen flex-col justify-between p-8 border-l border-neutral-800">
-          <div className="bg-[#2B2625] rounded-xl p-4 shadow-lg">
+        <div className="hidden md:flex md:w-2/5 bg-[#1A1615] h-screen flex-col justify-between p-8 border-l border-neutral-800/80">
+          {/* Top: Opponent Card */}
+          <div>
+            <div className="text-xs uppercase tracking-wider text-neutral-400 font-semibold mb-2">
+              Opponent
+            </div>
             <PlayerDiv
               user={oppid}
               color={oppColor}
               timer={opponentTime}
               turn={currentTurn}
+              isMe={false}
             />
           </div>
 
-          <div className="bg-[#2B2625] rounded-xl p-4 shadow-lg">
+          {/* Center: Game Info Panel & Demo Controls */}
+          <div className="my-auto bg-[#241F1E] border border-neutral-800/60 rounded-xl p-5 shadow-inner flex flex-col gap-3">
+            <div className="flex items-center justify-between text-xs text-neutral-400 border-b border-neutral-800 pb-2">
+              <span className="font-semibold uppercase tracking-wider">Match Status</span>
+              <span className="text-emerald-400 font-medium">
+                {isDemoMode ? "Practice / Preview" : "Live Match"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-neutral-300">Board Orientation</span>
+              <button
+                onClick={() => setMyColor((c) => (c === "white" ? "black" : "white"))}
+                className="flex items-center gap-1.5 text-sm font-semibold text-white capitalize bg-neutral-800 hover:bg-neutral-700 px-3 py-1 rounded-lg transition-all cursor-pointer"
+                title="Click to flip board"
+              >
+                <span
+                  className="w-3 h-3 rounded-full border border-neutral-500"
+                  style={{ backgroundColor: myColor === "white" ? "#FFFFFF" : "#1A1A1A" }}
+                />
+                {myColor} (Flip 🔄)
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-neutral-300">Turn Indicator</span>
+              <span
+                className={`text-sm font-bold capitalize ${
+                  isMyturn ? "text-emerald-400" : "text-amber-400"
+                }`}
+              >
+                {isDemoMode
+                  ? `${currentTurn}'s Turn`
+                  : isMyturn
+                  ? "Your Move"
+                  : "Opponent's Move"}
+              </span>
+            </div>
+
+            {isDemoMode && (
+              <div className="pt-2 border-t border-neutral-800 flex gap-2">
+                <button
+                  onClick={resetDemoBoard}
+                  className="w-full py-2 bg-[#B75A48] hover:bg-[#843E34] text-[#E8ECD6] font-semibold text-xs uppercase tracking-wider rounded-lg transition-all cursor-pointer shadow-md"
+                >
+                  🔄 Reset Board Position
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom: Current Player Card */}
+          <div>
+            <div className="text-xs uppercase tracking-wider text-neutral-400 font-semibold mb-2">
+              You
+            </div>
             <PlayerDiv
               user={currentUser}
               color={myColor}
               timer={myTime}
               turn={currentTurn}
+              isMe={true}
             />
           </div>
         </div>

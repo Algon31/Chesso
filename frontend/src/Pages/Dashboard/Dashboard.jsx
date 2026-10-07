@@ -51,12 +51,12 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="w-full h-screen bg-[#E8ECD6] m-0 md:pt-15 relative">
-        <div className="hidden md:block">
-          <Navbar />
-          <LogoutButton />
-        </div>
-        <div className="md:w-full flex justify-center h-full">
+      <div className="w-full h-screen bg-[#E8ECD6] m-0 md:pt-15 relative overflow-hidden">
+        {/* Navigation & Logout Controls (Accessible on Mobile and Desktop) */}
+        <Navbar />
+        <LogoutButton />
+
+        <div className="md:w-full flex justify-center h-full pt-16 md:pt-0">
           <div className="w-1/2  h-150 hidden md:flex justify-center items-center">
             {/*image chess*/}
             <img
@@ -143,18 +143,26 @@ function Button({ user }) {
     }
   };
   return (
-    <>
-      <div
-        className="bg-[#B75A48] w-40 md:w-70 h-12 md:h-18 rounded-sm md:rounded-xl  text-center md:mt-5 flex justify-center items-center content-center text cursor-pointer"
+    <div className="flex flex-col sm:flex-row items-center gap-3 md:mt-5">
+      <button
+        className="bg-[#B75A48] hover:bg-[#843E34] active:scale-95 transition-all text-[#E8ECD6] w-48 md:w-56 h-12 md:h-14 rounded-xl font-bold shadow-lg flex justify-center items-center cursor-pointer border border-[#E8ECD6]/15"
         onClick={HandleStart}
       >
         <img
           src="/assets/Svgs/game-start.svg"
           alt="start"
-          className="w-6 md:w-10 md:h-10 mr-3 text-[#E8ECD6]"
+          className="w-5 h-5 md:w-6 md:h-6 mr-2 text-[#E8ECD6]"
         />
-        Start Game
-      </div>
-    </>
+        Find Match
+      </button>
+
+      <button
+        className="bg-[#2B2625] hover:bg-[#3D3534] active:scale-95 transition-all text-[#E8ECD6] w-48 md:w-56 h-12 md:h-14 rounded-xl font-semibold shadow-md flex justify-center items-center cursor-pointer border border-neutral-700/60"
+        onClick={() => navigate("/preview")}
+      >
+        <span className="mr-2 text-lg">♟️</span>
+        Practice / Preview
+      </button>
+    </div>
   );
 }

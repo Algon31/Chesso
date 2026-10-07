@@ -16,11 +16,8 @@ export default function HomePage() {
 
   return (
     <>
-    <div className="hidden md:block">
-
-      <Navbar />
-      <LogoutButton />
-    </div>
+    <Navbar />
+    {user && <LogoutButton />}
 
       <div className="w-full h-screen flex flex-col justify-center items-center bg-[#E8ECD6]">
         {/* Hero Section */}

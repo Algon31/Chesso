@@ -27,6 +27,8 @@ function AppContent() {
         <Route path="/signin" element={<Signin/>} />
         <Route path="/Dashboard" element={<Dashboard/>} />
         <Route path="/Gamepage/:gameID" element={<GamePage/>}/>
+        <Route path="/preview" element={<GamePage/>}/>
+        <Route path="/practice" element={<GamePage/>}/>
       </Routes>
 
       {/* ✅ Hide in mobile when on GamePage */}
