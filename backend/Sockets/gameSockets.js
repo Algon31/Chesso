@@ -1,11 +1,15 @@
 import { Chess } from 'chess.js';
-import Game from '../models/GameModel.js'
-
+import Game from '../models/GameModel.js';
+import {
+    executeMove,
+    isGameOver,
+    getGameResult,
+    calculateTimeoutResult,
+    calculateResignationResult
+} from '../utilites/chessGameLogic.js';
 
 let waitingQ = []; // array for queue 
 const Games = {}; // for storing games
-
-
 
 export default function gameSetupSocket(io) {
     io.on('connection', (socket) => {
@@ -87,7 +91,7 @@ export default function gameSetupSocket(io) {
 
             }
         });
-        // console.log(Games);
+
         socket.on('makeMove', async ({ gameID, from, to, playerID, promotion }) => {
             console.log(`made a move, from ${from} , to : ${to} by player : ${playerID} `);
             let game = Games[gameID];
@@ -99,8 +103,6 @@ export default function gameSetupSocket(io) {
                 return;
             }
 
-            const chess = game.chess;
-
             if (game.currentP != playerID) {
                 socket.emit('error', {
                     message: 'Not Your Turn'
@@ -109,29 +111,28 @@ export default function gameSetupSocket(io) {
             }
 
             try {
-                const move = chess.move({ from, to, promotion: promotion || 'q' });
+                const moveResult = executeMove(game.chess, { from, to, promotion });
 
-                if (!move) {
-                    socket.emit('invalidMove', { message: "Invalid Move" });
-                    return
+                if (!moveResult.success) {
+                    socket.emit('invalidMove', { message: moveResult.error || "Invalid Move" });
+                    return;
                 }
 
-                const updateboard = chess.fen();
-                const nextTurn = chess.turn() === 'w' ? game.player1 : game.player2;
+                const updateboard = moveResult.fen;
+                const nextTurn = moveResult.turn === 'w' ? game.player1 : game.player2;
 
-
-                if (Gameover(updateboard)) {
-                    const result = getGameResult(updateboard, game.player1, game.player2);
+                if (moveResult.isGameOver) {
+                    const result = getGameResult(game.chess, game.player1, game.player2);
 
                     game.status = 'finished';
-                    game.Winner = result.WinnerID;
+                    game.Winner = result ? result.WinnerID : null;
                     
                     await Game.updateOne(
                         { _id: gameID }, { 
                         boardState: updateboard, 
                         status: 'finished', 
-                        currentP: nextTurn ,
-                        Result : result.res
+                        currentP: nextTurn,
+                        Result: result ? result.res : 'Game Over',
                     });
 
                     io.to(gameID).emit('gameOver', result);
@@ -151,22 +152,21 @@ export default function gameSetupSocket(io) {
                         timer: game.timer,
                         player1: game.player1,
                         player2: game.player2,
+                        isCheck: moveResult.isCheck,
                     });
                     await Game.updateOne({ _id: gameID }, { // saving current fen state in backend 
                         boardState: updateboard,
                         currentP: nextTurn,
-                    })
+                    });
                 }
             }
             catch (error) {
                 console.log('moving piece error : ', error);
                 socket.emit('error', { message: error.message });
             }
-
         });
+
         socket.on('recoverGame', async ({ gameID, playerID }) => {
-
-
             let game = Games[gameID];
 
             if (!game) {
@@ -202,30 +202,25 @@ export default function gameSetupSocket(io) {
                 color: playerID == game.player1 ? 'white' : 'black',
                 timer: game.timer,
             });
+        });
 
-        })
         socket.on('Resign', async ({ gameID, playerID, PlayerID }) => {
             const game = Games[gameID];
             if (!game) return;
 
             const resigner = playerID || PlayerID;
-            const opponentID = resigner === game.player1 ? game.player2 : game.player1;
+            const result = calculateResignationResult(resigner, game.player1, game.player2);
 
             stopTimer(gameID, 'player1');
             stopTimer(gameID, 'player2');
 
-            await Game.updateOne({_id : gameID},{
-                status : "finished",
-                WinnerID : opponentID,
-                Result : "Resignation",
+            await Game.updateOne({ _id: gameID }, {
+                status: "finished",
+                WinnerID: result.WinnerID,
+                Result: result.res,
             });
 
-            io.to(gameID).emit('gameOver', {
-                WinnerID: opponentID,
-                res: "Resignation",
-                draw: false,
-            });
-
+            io.to(gameID).emit('gameOver', result);
             delete Games[gameID];
         });
 
@@ -233,7 +228,6 @@ export default function gameSetupSocket(io) {
             waitingQ = waitingQ.filter(entry => entry.socket.id !== socket.id);
             console.log('disconnected client:', socket.id);
         });
-
     });
 }
 
@@ -249,24 +243,20 @@ function startTimer(gameID, player, io) {
             clearInterval(interval);
             game.timerIntervals[player] = null;
 
-            const WinnerID = player == 'player1' ? game.player2 : game.player1;
-            game.result = WinnerID;
+            const result = calculateTimeoutResult(player, game.player1, game.player2);
+            game.result = result.WinnerID;
 
             await Game.updateOne(
                 { _id: gameID },
                 {
                     status: 'finished',
-                    WinnerID: WinnerID,
+                    WinnerID: result.WinnerID,
                     timer: game.timer,
-                    Result : 'Time-Out'
-                    // here won by
+                    Result: result.res,
                 }
             );
 
-            const result = { WinnerID, draw: false, res: 'Time-Out' };
-
             io.to(gameID).emit('gameOver', result);
-
             delete Games[gameID];
         }
         else {
@@ -274,10 +264,9 @@ function startTimer(gameID, player, io) {
                 timer: game.timer,
             });
         }
-
     }, 1000);
     game.timerIntervals[player] = interval;
-};
+}
 
 // Stops the timer for the player 
 function stopTimer(gameID, player) {
@@ -288,30 +277,3 @@ function stopTimer(gameID, player) {
     game.timerIntervals[player] = null;
 }
 
-
-
-
-// checks wether the game is finished
-function Gameover(boardState) {
-    const chess = new Chess(boardState);
-
-    if (chess.isCheckmate() || chess.isDraw() || chess.isStalemate() || chess.isInsufficientMaterial()) {
-        return true;
-    } else return false;
-}
-
-
-// return what happend at last
-function getGameResult(boardState, player1, player2) {
-    const chess = new Chess(boardState);
-
-    if (chess.isCheckmate()) {
-        const WinnerID = chess.turn() === 'w' ? player2 : player1;
-        return { WinnerID, draw: false, res: 'CheckMate' };
-    }
-
-    if (chess.isDraw() || chess.isStalemate() || chess.isInsufficientMaterial()) {
-        return { WinnerID: null, draw: true , res: 'Draw' };
-    }
-    return null;
-}

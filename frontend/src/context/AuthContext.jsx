@@ -5,26 +5,46 @@ import Socket from "../utilites/Socket";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => localStorage.getItem("userId") || null);
+  const [userData, setUserData] = useState(() => {
+    const name = localStorage.getItem("userName");
+    const picture = localStorage.getItem("userPicture");
+    return name ? { name, profilePicture: picture } : null;
+  });
   const [isConnected, setIsConnected] = useState(Socket.connected);
 
-
-  
   // Check if logged in on mount
-const checkLogged = async () => {
-  try {
-    const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
-      credentials: "include",
-      headers: { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` },
-    });
-    console.log(res);
-    if (!res.ok) return;
-    const data = await res.json();
-    setUser(data._id);
-  } catch (err) {
-    console.log("Error checking login status:", err);
-  }
-};
+  const checkLogged = async () => {
+    try {
+      const res = await fetch(`${BackEndUrl}/auth/checklogged`, {
+        credentials: "include",
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && data._id) {
+        setUser(data._id);
+        setUserData(data);
+        localStorage.setItem("userId", data._id);
+        if (data.Name || data.name) {
+          localStorage.setItem("userName", data.Name || data.name);
+        }
+      }
+    } catch (err) {
+      console.log("Error checking login status:", err);
+    }
+  };
+
+  useEffect(() => {
+    // Check URL parameters for OAuth token / redirect callback
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    if (token) {
+      localStorage.setItem("jwtToken", token);
+      checkLogged();
+    } else {
+      checkLogged();
+    }
+  }, []);
 
   // Connect socket only if user is logged in
   useEffect(() => {
@@ -59,7 +79,7 @@ const checkLogged = async () => {
     };
   }, [user]);
 
-  // Keep localStorage in sync with user
+  // Keep localStorage in sync with user ID
   useEffect(() => {
     if (user) {
       localStorage.setItem("userId", user);
@@ -72,7 +92,16 @@ const checkLogged = async () => {
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isConnected , checkLogged}}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        userData,
+        setUserData,
+        isConnected,
+        checkLogged,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
